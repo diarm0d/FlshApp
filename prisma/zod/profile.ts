@@ -5,7 +5,7 @@ export const profileSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
-  description: z.string().nullish(),
+  description: z.string(),
   profileImage: z.string(),
   public: z.boolean(),
   sessionDuration: z.number().int(),

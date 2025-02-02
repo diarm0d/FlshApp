@@ -15,12 +15,12 @@ export const revalidate = 0;
 export default async function FlashPage({
   params,
 }: {
-  params: { flashId: string };
+  params: Promise<{ flashId: string }>;
 }) {
-
+  const { flashId } = await params;
   return (
     <main className="overflow-auto">
-      <Flash id={params.flashId} />
+      <Flash id={flashId} />
     </main>
   );
 }

@@ -5,12 +5,13 @@ import Link from "next/link";
 import { Share2Icon } from "lucide-react";
 import { Flash } from "@/lib/db/schema/flashes";
 
+
 export default async function SharedPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
   const { profile, flashes } = await getProfileBySlugWithFlashes(slug);
   if (profile === null) notFound();
   if (profile.public === false) return <main>This page is not public</main>;
@@ -23,7 +24,7 @@ export default async function SharedPage({
           </div>
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24">
-              <AvatarImage alt={profile.name} src={profile.image} />
+              <AvatarImage alt={profile.name} src={profile.profileImage} />
               <AvatarFallback>{profile.name}</AvatarFallback>
             </Avatar>
             <div className="text-center">

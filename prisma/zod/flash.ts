@@ -4,7 +4,7 @@ import { CompleteProfile, relatedProfileSchema, CompleteUser, relatedUserSchema 
 export const flashSchema = z.object({
   id: z.string(),
   title: z.string(),
-  description: z.string().nullish(),
+  description: z.string(),
   flashImage: z.string(),
   profileId: z.string(),
   userId: z.string(),

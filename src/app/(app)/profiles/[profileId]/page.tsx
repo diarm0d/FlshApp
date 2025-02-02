@@ -17,11 +17,12 @@ export const revalidate = 0;
 export default async function ProfilePage({
   params,
 }: {
-  params: { profileId: string };
+  params: Promise<{ profileId: string }>;
 }) {
+   const { profileId } = await params;
   return (
     <main className="overflow-auto">
-      <Profile id={params.profileId} />
+      <Profile id={profileId} />
     </main>
   );
 }
