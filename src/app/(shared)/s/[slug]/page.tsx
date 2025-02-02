@@ -10,7 +10,7 @@ export default async function SharedPage({
 }: {
   params: { slug: string };
 }) {
-  const { slug } = await params;
+  const { slug } = params;
   const { profile, flashes } = await getProfileBySlugWithFlashes(slug);
   if (profile === null) notFound();
   if (profile.public === false) return <main>This page is not public</main>;
