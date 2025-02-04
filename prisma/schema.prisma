@@ -75,7 +75,6 @@ model Profile {
   name            String
   slug            String   @unique
   description     String
-  profileImage    String
   public          Boolean
   sessionDuration Int
   depositAmount   Int

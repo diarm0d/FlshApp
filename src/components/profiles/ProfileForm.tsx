@@ -182,7 +182,7 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div>
-        <div>
+        {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -202,7 +202,7 @@ const ProfileForm = ({
         ) : (
           <div className="h-6" />
         )}
-      </div>
+      </div> */}
 {/* <div>
         <Label
           className={cn(
