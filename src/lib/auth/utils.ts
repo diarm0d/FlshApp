@@ -4,7 +4,7 @@ import { DefaultSession, getServerSession, NextAuthOptions } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import { redirect } from "next/navigation";
 import GoogleProvider from "next-auth/providers/google";
-import { env } from "@/lib/env.mjs";
+// import { env } from "@/lib/env.mjs";
 
 declare module "next-auth" {
   interface Session {
@@ -20,6 +20,7 @@ export type AuthSession = {
       id: string;
       name?: string;
       email?: string;
+      image?: string;
     };
   } | null;
 };
