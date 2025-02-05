@@ -1,4 +1,4 @@
-import { getProfileBySlugWithFlashes } from "@/lib/api/profiles/queries";
+import { getProfileBySlugWithFlashesUser } from "@/lib/api/profiles/queries";
 import { notFound } from "next/navigation";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import Link from "next/link";
@@ -12,7 +12,7 @@ export default async function SharedPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { profile, flashes } = await getProfileBySlugWithFlashes(slug);
+  const { profile, user, flashes } = await getProfileBySlugWithFlashesUser(slug);
   if (profile === null) notFound();
   if (profile.public === false) return <main>This page is not public</main>;
   return (
@@ -24,7 +24,7 @@ export default async function SharedPage({
           </div>
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24">
-              <AvatarImage alt={profile.name} src={profile.profileImage} />
+              <AvatarImage alt={profile.name} src={user.image ?? undefined}/>
               <AvatarFallback>{profile.name}</AvatarFallback>
             </Avatar>
             <div className="text-center">

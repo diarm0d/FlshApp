@@ -30,14 +30,15 @@ export const getProfileByIdWithFlashes = async (id: ProfileId) => {
   return { profile, flashes: flashes };
 };
 
-export const getProfileBySlugWithFlashes = async (slug: ProfileId) => {
+export const getProfileBySlugWithFlashesUser = async (slug: ProfileId) => {
   const { id: profileId } = profileIdSchema.parse({ id: slug });
   const p = await db.profile.findFirst({
     where: { slug: profileId },
-    include: { flashes: { include: { profile: true } } },
+    include: { flashes: { include: { profile: true }},
+    user: true },
   });
   if (p === null) return { profile: null };
-  const { flashes, ...profile } = p;
+  const { flashes, user, ...profile} = p;
 
-  return { profile, flashes: flashes };
+  return { profile, user, flashes: flashes };
 };
