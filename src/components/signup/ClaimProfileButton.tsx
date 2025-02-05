@@ -16,7 +16,7 @@ export default function ClaimProfileButton() {
               {/* <span className="text-muted-foreground">name</span> */}
             </span>
             <Input
-              className="text-lg border-none bg-transparent px-1 ring-offset-0 ring-0"
+              className=" ml-1 pl-0 text-lg border-transparent focus:border-transparent focus:ring-0 hover:border-transparent focus-visible:ring-0"
               type="text"
               placeholder="username"
             />
