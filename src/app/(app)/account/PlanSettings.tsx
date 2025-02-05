@@ -65,7 +65,7 @@ export default function PlanSettings({
       </AccountCardBody>
       <AccountCardFooter description="Manage your subscription on Stripe.">
         <Link href="/account/billing">
-          <Button variant="outline">Go to billing</Button>
+          <Button>Go to billing</Button>
         </Link>
       </AccountCardFooter>
     </AccountCard>
