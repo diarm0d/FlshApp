@@ -41,9 +41,9 @@ export default function LandingPage() {
                     with your online flashbook
                   </h1>
                   <p className="max-w-[600px] text-neutral-500 md:text-xl dark:text-neutral-400">
-                    Give your team the toolkit to stop configuring and start
-                    innovating. Securely build, deploy, and scale the best web
-                    experiences.
+                    Ditch the admin and get back to creating. Your Flsh App
+                    profile lets you manage bookings, deposits, and available
+                    flashes all in one place.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -82,12 +82,12 @@ export default function LandingPage() {
                   Key Features
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                  Faster iteration. More innovation.
+                  💥 More Bookings, Less Hassle.
                 </h2>
                 <p className="max-w-[900px] text-neutral-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-neutral-400">
-                  The platform for rapid progress. Let your team focus on
-                  shipping features instead of managing infrastructure with
-                  automated CI/CD.
+                  Get booked fast without the back-and-forth. Clients can check
+                  your availability, pay deposits, and lock in their
+                  appointments with ease.
                 </p>
               </div>
             </div>
@@ -97,16 +97,18 @@ export default function LandingPage() {
                 <ul className="grid gap-6">
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">Collaboration</h3>
+                      <h3 className="text-xl font-bold">🤝 Stay Connected</h3>
                       <p className="text-neutral-500 dark:text-neutral-400">
-                        Make collaboration seamless with built-in code review
-                        tools.
+                        Chat with clients, manage bookings, and keep everything
+                        in one place—no more DMs getting lost.
                       </p>
                     </div>
                   </li>
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">Automation</h3>
+                      <h3 className="text-xl font-bold">
+                        ⚡ Set It and Forget It
+                      </h3>
                       <p className="text-neutral-500 dark:text-neutral-400">
                         Automate your workflow with continuous integration.
                       </p>
@@ -114,10 +116,12 @@ export default function LandingPage() {
                   </li>
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">Scale</h3>
+                      <h3 className="text-xl font-bold">
+                        🚀 Take Control of Your Business
+                      </h3>
                       <p className="text-neutral-500 dark:text-neutral-400">
-                        Deploy to the cloud with a single click and scale with
-                        ease.
+                        Run your schedule, manage clients, and keep everything
+                        under control
                       </p>
                     </div>
                   </li>

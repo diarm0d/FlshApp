@@ -227,6 +227,10 @@ const FlashForm = ({
               console.log(err);
               toast.error("Something went wrong");
             }}
+            appearance={{
+              button:
+                "bg-primary text-sm font-medium !text-primary-foreground hover:bg-primary/90 hover:!text-primary-foreground",
+            }}
           />
         )}
         {errors?.flashImage ? (
