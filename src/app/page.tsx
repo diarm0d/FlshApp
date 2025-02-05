@@ -5,6 +5,7 @@
  */
 import Image from "next/image";
 import Link from "next/link";
+import ClaimProfileButton from "../components/signup/ClaimProfileButton";
 
 export default function LandingPage() {
   return (
@@ -46,8 +47,9 @@ export default function LandingPage() {
                     flashes all in one place.
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Link
+                <ClaimProfileButton />
+                {/* <div className="flex flex-col gap-2 min-[400px]:flex-row"> */}
+                {/* <Link
                     className="inline-flex h-10 items-center justify-center rounded-md bg-neutral-900 px-8 text-sm font-medium text-neutral-50 shadow transition-colors hover:bg-neutral-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90 dark:focus-visible:ring-neutral-300"
                     href="#"
                   >
@@ -58,8 +60,8 @@ export default function LandingPage() {
                     href="#"
                   >
                     Contact Sales
-                  </Link>
-                </div>
+                  </Link> */}
+                {/* </div> */}
               </div>
               <div className="relative aspect-video w-full h-max">
                 <Image
@@ -144,7 +146,8 @@ export default function LandingPage() {
               </div>
               <div className="w-full max-w-sm space-y-2">
                 <form className="flex sm:flex-row flex-col space-y-2 sm:space-y-0 sm:space-x-2">
-                  <input
+                  <ClaimProfileButton />
+                  {/* <input
                     className="max-w-lg flex-1 px-4 py-2 border-border border rounded-md "
                     placeholder="Enter your email"
                     type="email"
@@ -154,7 +157,7 @@ export default function LandingPage() {
                     className="inline-flex h-10 items-center justify-center rounded-md bg-neutral-900 px-4 text-sm font-medium text-neutral-50 shadow transition-colors hover:bg-neutral-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90 dark:focus-visible:ring-neutral-300"
                   >
                     Sign Up
-                  </button>
+                  </button> */}
                 </form>
               </div>
             </div>
@@ -163,7 +166,7 @@ export default function LandingPage() {
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
         <p className="text-xs text-neutral-500 dark:text-neutral-400">
-          © 2024 Acme Inc. All rights reserved.
+          © 2025 Flsh App. All rights reserved.
         </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link className="text-xs hover:underline underline-offset-4" href="#">
