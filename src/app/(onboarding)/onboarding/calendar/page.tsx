@@ -27,7 +27,7 @@ export default function OnboardingCalPage() {
           <Image
             src={CalGif}
             alt="almost done"
-            className="rounded-md w-full my-8"
+            className="rounded-md w-full mb-4"
             width={420}
             height={420}
           />
