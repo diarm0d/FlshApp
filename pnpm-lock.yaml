@@ -10,13 +10,13 @@ dependencies:
     version: 0.37.4
   '@auth/prisma-adapter':
     specifier: ^2.7.4
-    version: 2.7.4(@prisma/client@6.3.0)
+    version: 2.7.4(@prisma/client@6.3.1)
   '@hookform/resolvers':
     specifier: ^3.10.0
     version: 3.10.0(react-hook-form@7.54.2)
   '@prisma/client':
-    specifier: 6.3.0
-    version: 6.3.0(prisma@6.3.1)(typescript@5.7.3)
+    specifier: 6.3.1
+    version: 6.3.1(prisma@6.3.1)(typescript@5.7.3)
   '@radix-ui/react-accordion':
     specifier: ^1.2.2
     version: 1.2.2(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.0.0)(react@19.0.0)
@@ -200,7 +200,7 @@ devDependencies:
     specifier: ^8
     version: 8.5.1
   prisma:
-    specifier: ^6.3.0
+    specifier: ^6.3.1
     version: 6.3.1(typescript@5.7.3)
   tailwindcss:
     specifier: ^3.4.1
@@ -239,13 +239,13 @@ packages:
       preact-render-to-string: 6.5.11(preact@10.24.3)
     dev: false
 
-  /@auth/prisma-adapter@2.7.4(@prisma/client@6.3.0):
+  /@auth/prisma-adapter@2.7.4(@prisma/client@6.3.1):
     resolution: {integrity: sha512-3T/X94R9J1sxOLQtsD3ijIZ0JGHPXlZQxRr/8NpnZBJ3KGxun/mNsZ1MwMRhTxy0mmn9JWXk7u9+xCcVn0pu3A==}
     peerDependencies:
       '@prisma/client': '>=2.26.0 || >=3 || >=4 || >=5'
     dependencies:
       '@auth/core': 0.37.4
-      '@prisma/client': 6.3.0(prisma@6.3.1)(typescript@5.7.3)
+      '@prisma/client': 6.3.1(prisma@6.3.1)(typescript@5.7.3)
     transitivePeerDependencies:
       - '@simplewebauthn/browser'
       - '@simplewebauthn/server'
@@ -740,8 +740,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@prisma/client@6.3.0(prisma@6.3.1)(typescript@5.7.3):
-    resolution: {integrity: sha512-BY3Fi28PUSk447Bpv22LhZp4HgNPo7NsEN+EteM1CLDnLjig5863jpW+3c3HHLFmml+nB/eJv1CjSriFZ8z7Cg==}
+  /@prisma/client@6.3.1(prisma@6.3.1)(typescript@5.7.3):
+    resolution: {integrity: sha512-ARAJaPs+eBkemdky/XU3cvGRl+mIPHCN2lCXsl5Vlb0E2gV+R6IN7aCI8CisRGszEZondwIsW9Iz8EJkTdykyA==}
     engines: {node: '>=18.18'}
     requiresBuild: true
     peerDependencies:
