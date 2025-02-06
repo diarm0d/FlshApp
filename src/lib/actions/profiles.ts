@@ -26,12 +26,25 @@ const handleErrors = (e: unknown) => {
 };
 
 const revalidateProfiles = () => revalidatePath("/profiles");
+const redirectOnboarding = () => revalidatePath("/onboarding/calendar");
+
 
 export const createProfileAction = async (input: NewProfileParams) => {
   try {
     const payload = insertProfileParams.parse(input);
     await createProfile(payload);
     revalidateProfiles();
+  } catch (e) {
+    return handleErrors(e);
+  }
+};
+
+
+export const createProfileOnboardingAction = async (input: NewProfileParams) => {
+  try {
+    const payload = insertProfileParams.parse(input);
+    await createProfile(payload);
+    redirectOnboarding();
   } catch (e) {
     return handleErrors(e);
   }

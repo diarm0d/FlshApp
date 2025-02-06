@@ -14,47 +14,45 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useBackPath } from "@/components/shared/BackButton";
 
-
-import { Checkbox } from "@/components/ui/checkbox"
-
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { type Profile, insertProfileParams } from "@/lib/db/schema/profiles";
 import {
   createProfileAction,
   deleteProfileAction,
   updateProfileAction,
+  createProfileOnboardingAction,
 } from "@/lib/actions/profiles";
 
-
 const ProfileForm = ({
-  
   profile,
   openModal,
   closeModal,
   addOptimistic,
   postSuccess,
+  onboarding = false,
 }: {
   profile?: Profile | null;
-  
+
   openModal?: (profile?: Profile) => void;
   closeModal?: () => void;
   addOptimistic?: TAddOptimistic;
   postSuccess?: () => void;
+  onboarding?: boolean;
 }) => {
   const { errors, hasErrors, setErrors, handleChange } =
     useValidatedForm<Profile>(insertProfileParams);
   const editing = !!profile?.id;
-  
+
   const [isDeleting, setIsDeleting] = useState(false);
   const [pending, startMutation] = useTransition();
 
   const router = useRouter();
   const backpath = useBackPath("profiles");
 
-
   const onSuccess = (
     action: Action,
-    data?: { error: string; values: Profile },
+    data?: { error: string; values: Profile }
   ) => {
     const failed = Boolean(data?.error);
     if (failed) {
@@ -74,7 +72,9 @@ const ProfileForm = ({
     setErrors(null);
 
     const payload = Object.fromEntries(data.entries());
-    const profileParsed = await insertProfileParams.safeParseAsync({  ...payload });
+    const profileParsed = await insertProfileParams.safeParseAsync({
+      ...payload,
+    });
     if (!profileParsed.success) {
       setErrors(profileParsed?.error.flatten().fieldErrors);
       return;
@@ -91,22 +91,25 @@ const ProfileForm = ({
     };
     try {
       startMutation(async () => {
-        addOptimistic && addOptimistic({
-          data: pendingProfile,
-          action: editing ? "update" : "create",
-        });
+        addOptimistic &&
+          addOptimistic({
+            data: pendingProfile,
+            action: editing ? "update" : "create",
+          });
 
         const error = editing
           ? await updateProfileAction({ ...values, id: profile.id })
+          : onboarding
+          ? await createProfileOnboardingAction(values)
           : await createProfileAction(values);
 
         const errorFormatted = {
           error: error ?? "Error",
-          values: pendingProfile 
+          values: pendingProfile,
         };
         onSuccess(
           editing ? "update" : "create",
-          error ? errorFormatted : undefined,
+          error ? errorFormatted : undefined
         );
       });
     } catch (e) {
@@ -119,11 +122,11 @@ const ProfileForm = ({
   return (
     <form action={handleSubmit} onChange={handleChange} className={"space-y-8"}>
       {/* Schema fields start */}
-              <div>
+      <div>
         <Label
           className={cn(
             "mb-2 inline-block",
-            errors?.name ? "text-destructive" : "",
+            errors?.name ? "text-destructive" : ""
           )}
         >
           Name
@@ -140,11 +143,11 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div>
-        <div>
+      <div>
         <Label
           className={cn(
             "mb-2 inline-block",
-            errors?.slug ? "text-destructive" : "",
+            errors?.slug ? "text-destructive" : ""
           )}
         >
           Slug
@@ -161,11 +164,11 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div>
-        <div>
+      <div>
         <Label
           className={cn(
             "mb-2 inline-block",
-            errors?.description ? "text-destructive" : "",
+            errors?.description ? "text-destructive" : ""
           )}
         >
           Description
@@ -177,12 +180,14 @@ const ProfileForm = ({
           defaultValue={profile?.description ?? ""}
         />
         {errors?.description ? (
-          <p className="text-xs text-destructive mt-2">{errors.description[0]}</p>
+          <p className="text-xs text-destructive mt-2">
+            {errors.description[0]}
+          </p>
         ) : (
           <div className="h-6" />
         )}
       </div>
-        {/* <div>
+      {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -203,7 +208,7 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div> */}
-{/* <div>
+      {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -220,11 +225,11 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div> */}
-        <div>
+      <div>
         <Label
           className={cn(
             "mb-2 inline-block",
-            errors?.sessionDuration ? "text-destructive" : "",
+            errors?.sessionDuration ? "text-destructive" : ""
           )}
         >
           Session Duration
@@ -236,16 +241,18 @@ const ProfileForm = ({
           defaultValue={profile?.sessionDuration ?? ""}
         />
         {errors?.sessionDuration ? (
-          <p className="text-xs text-destructive mt-2">{errors.sessionDuration[0]}</p>
+          <p className="text-xs text-destructive mt-2">
+            {errors.sessionDuration[0]}
+          </p>
         ) : (
           <div className="h-6" />
         )}
       </div>
-        <div>
+      <div>
         <Label
           className={cn(
             "mb-2 inline-block",
-            errors?.depositAmount ? "text-destructive" : "",
+            errors?.depositAmount ? "text-destructive" : ""
           )}
         >
           Deposit Amount
@@ -257,7 +264,9 @@ const ProfileForm = ({
           defaultValue={profile?.depositAmount ?? ""}
         />
         {errors?.depositAmount ? (
-          <p className="text-xs text-destructive mt-2">{errors.depositAmount[0]}</p>
+          <p className="text-xs text-destructive mt-2">
+            {errors.depositAmount[0]}
+          </p>
         ) : (
           <div className="h-6" />
         )}
@@ -277,7 +286,8 @@ const ProfileForm = ({
             setIsDeleting(true);
             closeModal && closeModal();
             startMutation(async () => {
-              addOptimistic && addOptimistic({ action: "delete", data: profile });
+              addOptimistic &&
+                addOptimistic({ action: "delete", data: profile });
               const error = await deleteProfileAction(profile.id);
               setIsDeleting(false);
               const errorFormatted = {
