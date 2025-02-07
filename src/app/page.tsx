@@ -9,7 +9,7 @@ import ClaimProfileButton from "../components/signup/ClaimProfileButton";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#ECE2D0] dark:bg-inherit">
+    <div className="flex flex-col min-h-screen bg-[#F4F2EE] dark:bg-inherit">
       <header className="container px-4 lg:px-6 h-14 flex items-center">
         <Link className="flex items-center justify-center" href="#">
           <CalendarHeartIcon className="h-6 w-6" />
