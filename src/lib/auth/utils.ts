@@ -49,4 +49,10 @@ export const getUserAuth = async () => {
 export const checkAuth = async () => {
   const { session } = await getUserAuth();
   if (!session) redirect("/api/auth/signin");
+
+  if (!session.session?.user.profile) redirect("/onboarding")
+
+  if (!session.session?.user.grantId) redirect("/onboarding/calendar")
+
+  if (!session.session?.user.stripeId) redirect("/onboarding/subscribe")
 };

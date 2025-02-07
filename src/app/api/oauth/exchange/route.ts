@@ -36,6 +36,6 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.log(error);
   }
-  // TO DO: redirect to stripe payment
-  redirect("/dashboard");
+  
+  redirect("/onboarding/subscribe");
 }
