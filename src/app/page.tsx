@@ -62,6 +62,9 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="relative aspect-video w-full h-max">
+                <div className="absolute top-0 -left-4 size-72 bg-[#D22B2B] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob ease-in-out" />
+                <div className="absolute top-0 -right-4 size-72 bg-[#F9A602] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-2 ease-in-out" />
+                <div className="absolute -bottom-24 left-32 size-72 bg-[#0F4C81] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-4 ease-in-out" />
                 <Image
                   src="/hero-graphic.png"
                   alt="hero img"
@@ -92,7 +95,12 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-10">
-              <div className="mx-auto aspect-video overflow-hidden bg-neutral-100 dark:bg-neutral-800 rounded-xl object-cover object-center sm:w-full lg:order-last" />
+              <div className="relative aspect-video w-full h-max">
+                {/* <div className="absolute top-0 -left-4 size-72 bg-[#D22B2B] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob ease-in-out" />
+                <div className="absolute top-0 -right-4 size-72 bg-[#F9A602] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-2 ease-in-out" />
+                <div className="absolute -bottom-10 left-32 size-72 bg-[#0F4C81] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-4 ease-in-out" /> */}
+                <div className="mx-auto z-100 aspect-video overflow-hidden bg-neutral-50 dark:bg-neutral-800 rounded-xl object-cover object-center sm:w-full lg:order-last" />
+              </div>
               <div className="flex flex-col justify-center space-y-4">
                 <ul className="grid gap-6">
                   <li>
