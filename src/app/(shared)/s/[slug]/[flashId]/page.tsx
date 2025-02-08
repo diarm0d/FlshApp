@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 
 export default async function FlashPage({
   params,
@@ -37,17 +38,13 @@ export default async function FlashPage({
           <div className="space-y-2">
             <h2 className="text-lg font-semibold">Artist Information</h2>
             <div className="flex items-center gap-4">
-              <Image
-                alt="Artist"
-                className="rounded-full"
-                height={48}
-                src={flash.user.image}
-                style={{
-                  aspectRatio: "48/48",
-                  objectFit: "cover",
-                }}
-                width={48}
-              />
+              <Avatar className="h-12 w-12">
+                <AvatarImage
+                  alt={flash.user.name}
+                  src={flash.user.image ?? undefined}
+                />
+                <AvatarFallback>{flash.user.name}</AvatarFallback>
+              </Avatar>
               <div>
                 <p className="font-medium">{flash.profile.name}</p>
                 <p className="text-gray-500 dark:text-gray-400">
