@@ -7,9 +7,10 @@ import Image from "next/image";
 export default async function FlashPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ flashId: string }>;
 }) {
-  const { flash } = await getFlashById(params.slug);
+  const { slug, flashId } = await params;
+  const { flash } = await getFlashById(flashId);
   if (flash === null) notFound();
 
   return (
@@ -18,10 +19,10 @@ export default async function FlashPage({
         <div className="flex items-center justify-center">
           <div className="w-lg sm:mw-xl">
             <Image
-              alt="Product Image"
+              alt={flash.title}
               className="aspect-square object-cover border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
               height={300}
-              src={flash.image}
+              src={flash.flashImage}
               width={300}
             />
           </div>
@@ -56,7 +57,7 @@ export default async function FlashPage({
             </div>
           </div>
           <div className="grid grid-col-1 gap-4">
-            <Link href={`${params.slug}/checkout`}>
+            <Link href={`${slug}/checkout`}>
               <Button className="w-full" size="lg">
                 Book Appointment
               </Button>

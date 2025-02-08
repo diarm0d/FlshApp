@@ -110,6 +110,9 @@ dependencies:
   class-variance-authority:
     specifier: ^0.7.1
     version: 0.7.1
+  client@6.3.1:
+    specifier: link:prisma/client@6.3.1
+    version: link:prisma/client@6.3.1
   clsx:
     specifier: ^2.1.1
     version: 2.1.1

@@ -38,7 +38,7 @@ export default async function SharedPage({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 w-full overflow-y-scroll">
               {flashes.map((flash: Flash) => (
-                <>
+                <div key={flash.id}>
                   <Link href={`/s/${slug}/${flash.id}`}>
                     <div
                       key={flash.id}
@@ -65,7 +65,7 @@ export default async function SharedPage({
                       </div>
                     </div>
                   </Link>
-                </>
+                </div>
               ))}
             </div>
           </div>
