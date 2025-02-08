@@ -7,7 +7,7 @@ import Image from "next/image";
 export default async function FlashPage({
   params,
 }: {
-  params: Promise<{ flashId: string }>;
+  params: Promise<{ slug: string; flashId: string }>;
 }) {
   const { slug, flashId } = await params;
   const { flash } = await getFlashById(flashId);
