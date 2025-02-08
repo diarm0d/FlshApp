@@ -16,9 +16,9 @@ generator zod {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl =  env("DIRECT_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
   relationMode = "prisma"
 }
 
@@ -59,8 +59,9 @@ model User {
   sessions      Session[]
   profiles      Profile[]
   flashes       Flash[]
-  
-  subscription Subscription?
+
+  subscription   Subscription?
+  availableTimes AvailableTime[]
 }
 
 model VerificationToken {
@@ -83,7 +84,7 @@ model Profile {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  flashes           Flash[]
+  flashes         Flash[]
 }
 
 model Flash {
@@ -110,4 +111,26 @@ model Subscription {
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 
   @@id([userId, stripeCustomerId])
+}
+
+model AvailableTime {
+  id        String   @id @default(cuid())
+  day       Day
+  fromTime  String
+  tillTime  String
+  isActive  Boolean  @default(true)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Day {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
 }
