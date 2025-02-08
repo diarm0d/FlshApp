@@ -6,7 +6,6 @@ export const profileSchema = z.object({
   name: z.string(),
   slug: z.string(),
   description: z.string(),
-  profileImage: z.string(),
   public: z.boolean(),
   sessionDuration: z.number().int(),
   depositAmount: z.number().int(),
