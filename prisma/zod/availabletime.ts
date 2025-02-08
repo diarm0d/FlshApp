@@ -1,9 +1,10 @@
 import * as z from "zod"
+import { Day } from "@prisma/client"
 import { CompleteUser, relatedUserSchema } from "./index"
 
 export const availableTimeSchema = z.object({
   id: z.string(),
-  day: z.string(),
+  day: z.nativeEnum(Day),
   fromTime: z.string(),
   tillTime: z.string(),
   isActive: z.boolean(),

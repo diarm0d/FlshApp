@@ -15,12 +15,13 @@ export const revalidate = 0;
 export default async function AvailableTimePage({
   params,
 }: {
-  params: { availableTimeId: string };
+  params:  Promise<{ availableTimeId: string }>;
 }) {
+  const { availableTimeId } = await params;
 
   return (
     <main className="overflow-auto">
-      <AvailableTime id={params.availableTimeId} />
+      <AvailableTime id={availableTimeId} />
     </main>
   );
 }
