@@ -746,7 +746,6 @@ packages:
     engines: {node: '>=14'}
     requiresBuild: true
     optional: true
-
   /@prisma/client@6.3.1(prisma@6.3.1)(typescript@5.7.3):
     resolution: {integrity: sha512-ARAJaPs+eBkemdky/XU3cvGRl+mIPHCN2lCXsl5Vlb0E2gV+R6IN7aCI8CisRGszEZondwIsW9Iz8EJkTdykyA==}
     engines: {node: '>=18.18'}
