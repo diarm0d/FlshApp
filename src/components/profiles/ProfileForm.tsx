@@ -119,6 +119,10 @@ const ProfileForm = ({
           ? await createProfileOnboardingAction(values)
           : await createProfileAction(values);
 
+            if (onboarding && !error) {
+              router.push("/onboarding/calendar");
+            }
+
         const errorFormatted = {
           error: error ?? "Error",
           values: pendingProfile,

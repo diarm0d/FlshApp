@@ -1,4 +1,3 @@
-
 import Nylas from "nylas";
 
 export const nylas = new Nylas({

@@ -28,7 +28,6 @@ export async function GET(req: NextRequest) {
         id: session.session?.user?.id,
       },
       data: {
-        //@ts-expect-error : db prisma err
         grantId: grantId,
         grantEmail: email,
       },

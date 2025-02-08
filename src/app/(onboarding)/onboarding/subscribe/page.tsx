@@ -5,11 +5,8 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card";
-// import { Button } from "@/components/ui/button";
-// import Link from "next/link";
-// import { CreditCard } from "lucide-react";
 import Image from "next/image";
-import { checkAuth, getUserAuth } from "@/lib/auth/utils";
+import { getUserAuth } from "@/lib/auth/utils";
 import { getUserSubscriptionPlan } from "@/lib/stripe/subscription";
 import { ManageUserSubscriptionButton } from "@/app/(app)/account/billing/ManageSubscription";
 import { storeSubscriptionPlans } from "@/config/subscriptions";
@@ -17,7 +14,6 @@ import { storeSubscriptionPlans } from "@/config/subscriptions";
 const CalGif = "/calgif.gif";
 
 export default async function OnboardingPaymentPage() {
-  await checkAuth();
   const { session } = await getUserAuth();
   const subscriptionPlan = await getUserSubscriptionPlan();
   const baseSubscription = storeSubscriptionPlans[0];
@@ -42,14 +38,9 @@ export default async function OnboardingPaymentPage() {
             stripePriceId={baseSubscription.stripePriceId}
             stripeCustomerId={subscriptionPlan?.stripeCustomerId}
             isSubscribed={!!subscriptionPlan.isSubscribed}
-            isCurrentPlan={subscriptionPlan?.name === plan.name}
+            isCurrentPlan={subscriptionPlan?.name === baseSubscription.name}
+            onboarding
           />
-          {/* <Button asChild className="w-full">
-            <Link href="/api/auth">
-              Subscribe
-              <CreditCard className="size-4" />
-            </Link>
-          </Button> */}
         </CardContent>
       </Card>
     </div>

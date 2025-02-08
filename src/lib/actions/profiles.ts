@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import {
   createProfile,
   deleteProfile,
@@ -26,8 +27,6 @@ const handleErrors = (e: unknown) => {
 };
 
 const revalidateProfiles = () => revalidatePath("/profiles");
-const redirectOnboarding = () => revalidatePath("/onboarding/calendar");
-
 
 export const createProfileAction = async (input: NewProfileParams) => {
   try {
@@ -44,7 +43,6 @@ export const createProfileOnboardingAction = async (input: NewProfileParams) => 
   try {
     const payload = insertProfileParams.parse(input);
     await createProfile(payload);
-    redirectOnboarding();
   } catch (e) {
     return handleErrors(e);
   }

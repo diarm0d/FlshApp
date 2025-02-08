@@ -4,7 +4,7 @@ import { DefaultSession, getServerSession, NextAuthOptions } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import { redirect } from "next/navigation";
 import GoogleProvider from "next-auth/providers/google";
-// import { env } from "@/lib/env.mjs";
+import { sessionSchema } from '../../../prisma/zod/session';
 
 declare module "next-auth" {
   interface Session {
@@ -21,6 +21,9 @@ export type AuthSession = {
       name?: string;
       email?: string;
       image?: string;
+      grantId?: string;
+      profiles?: { id: string };
+      subscription?: { stripeCustomerId: string };
     };
   } | null;
 };
@@ -28,7 +31,31 @@ export type AuthSession = {
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db) as Adapter,
   callbacks: {
-    session: ({ session, user }) => {
+    session: async ({ session, user }) => {
+      const userDetails = await db.user.findUnique({
+        where: { id: user.id },
+        select: {
+          grantId: true,
+          profiles: {
+            select: {
+              id: true,
+            },
+          },
+          subscription: {
+            select: {
+              stripeCustomerId: true,
+            },
+          },
+        },
+      });
+
+      // Assign the additional info to the session
+      if (userDetails) {
+        session.user.grantId = userDetails.grantId;
+        session.user.profiles = userDetails.profiles;
+        session.user.subscription = userDetails.subscription;
+      }
+
       session.user.id = user.id;
       return session;
     },
@@ -50,9 +77,11 @@ export const checkAuth = async () => {
   const { session } = await getUserAuth();
   if (!session) redirect("/api/auth/signin");
 
-  if (!session.session?.user.profile) redirect("/onboarding")
+  console.log(session)
 
-  if (!session.session?.user.grantId) redirect("/onboarding/calendar")
+  if (!session.user.profiles || session.user.profiles.length === 0) redirect("/onboarding")
 
-  if (!session.session?.user.stripeId) redirect("/onboarding/subscribe")
+  if (!session.user.grantId) redirect("/onboarding/calendar")
+
+  if (!session.user.subscription.stripeCustomerId) redirect("/onboarding/subscribe")
 };
