@@ -13,7 +13,7 @@ export const getFlashById = async (id: FlashId) => {
   const { id: flashId } = flashIdSchema.parse({ id });
   const f = await db.flash.findFirst({
     where: { id: flashId, userId: session?.user.id!},
-    include: { profile: true }
+    include: { profile: true, user: true }
   });
   return { flash: f };
 };

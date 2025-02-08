@@ -44,6 +44,8 @@ const ProfileForm = ({
     useValidatedForm<Profile>(insertProfileParams);
   const editing = !!profile?.id;
 
+  const [userName, setUserName] = useState(profile?.name ?? "");
+  const [slug, setSlug] = useState(profile?.slug ?? "");
   const [isDeleting, setIsDeleting] = useState(false);
   const [pending, startMutation] = useTransition();
 
@@ -66,6 +68,20 @@ const ProfileForm = ({
       toast.success(`Profile ${action}d!`);
       if (action === "delete") router.push(backpath);
     }
+  };
+
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/[^a-z0-9-]/g, ""); // Remove special characters
+  };
+
+  const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUserName(value);
+    setSlug(generateSlug(value)); // Update slug automatically
   };
 
   const handleSubmit = async (data: FormData) => {
@@ -129,13 +145,14 @@ const ProfileForm = ({
             errors?.name ? "text-destructive" : ""
           )}
         >
-          Name
+          Username
         </Label>
         <Input
           type="text"
           name="name"
           className={cn(errors?.name ? "ring ring-destructive" : "")}
-          defaultValue={profile?.name ?? ""}
+          value={userName}
+          onChange={(e) => handleUserNameChange(e)}
         />
         {errors?.name ? (
           <p className="text-xs text-destructive mt-2">{errors.name[0]}</p>
@@ -152,12 +169,22 @@ const ProfileForm = ({
         >
           Slug
         </Label>
-        <Input
-          type="text"
-          name="slug"
-          className={cn(errors?.slug ? "ring ring-destructive" : "")}
-          defaultValue={profile?.slug ?? ""}
-        />
+        <div className="flex rounder-md">
+          <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-muted bg-muted text-sm text-muted-foreground">
+            flsh.app/s/
+          </span>
+          <Input
+            type="text"
+            name="slug"
+            className={cn(
+              errors?.slug
+                ? "ring ring-destructive rounded-l-none"
+                : "rounded-l-none"
+            )}
+            readOnly
+            value={slug}
+          />
+        </div>
         {errors?.slug ? (
           <p className="text-xs text-destructive mt-2">{errors.slug[0]}</p>
         ) : (
