@@ -4,6 +4,7 @@ import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import Link from "next/link";
 import { Share2Icon } from "lucide-react";
 import { Flash } from "@/lib/db/schema/flashes";
+import Image from "next/image";
 
 
 export default async function SharedPage({
@@ -37,14 +38,14 @@ export default async function SharedPage({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 w-full overflow-y-scroll">
               {flashes.map((flash: Flash) => (
-                <>
-                  <Link href={`/f/${flash.id}`}>
+                <div key={flash.id}>
+                  <Link href={`/s/${slug}/${flash.id}`}>
                     <div
                       key={flash.id}
                       className="rounded-lg border text-card-foreground shadow-sm overflow-hidden bg-secondary"
                     >
-                      <img
-                        alt="Product 1"
+                      <Image
+                        alt={flash.title}
                         className="w-full h-48 object-cover"
                         height={400}
                         src={flash.flashImage}
@@ -64,7 +65,7 @@ export default async function SharedPage({
                       </div>
                     </div>
                   </Link>
-                </>
+                </div>
               ))}
             </div>
           </div>
