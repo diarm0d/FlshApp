@@ -40,10 +40,12 @@ export default async function FlashPage({
             <div className="flex items-center gap-4">
               <Avatar className="h-12 w-12">
                 <AvatarImage
-                  alt={flash.user.name}
+                  alt={flash.user.name || "artist profile"}
                   src={flash.user.image ?? undefined}
                 />
-                <AvatarFallback>{flash.user.name}</AvatarFallback>
+                <AvatarFallback>
+                  {flash.user.name || "artist profile"}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-medium">{flash.profile.name}</p>
