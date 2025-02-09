@@ -21,6 +21,7 @@ import {
   createProfileAction,
   deleteProfileAction,
   updateProfileAction,
+  createProfileOnboardingAction,
 } from "@/lib/actions/profiles";
 
 const ProfileForm = ({
@@ -29,6 +30,7 @@ const ProfileForm = ({
   closeModal,
   addOptimistic,
   postSuccess,
+  onboarding = false,
 }: {
   profile?: Profile | null;
 
@@ -36,6 +38,7 @@ const ProfileForm = ({
   closeModal?: () => void;
   addOptimistic?: TAddOptimistic;
   postSuccess?: () => void;
+  onboarding?: boolean;
 }) => {
   const { errors, hasErrors, setErrors, handleChange } =
     useValidatedForm<Profile>(insertProfileParams);
@@ -112,7 +115,13 @@ const ProfileForm = ({
 
         const error = editing
           ? await updateProfileAction({ ...values, id: profile.id })
+          : onboarding
+          ? await createProfileOnboardingAction(values)
           : await createProfileAction(values);
+
+            if (onboarding && !error) {
+              router.push("/onboarding/calendar");
+            }
 
         const errorFormatted = {
           error: error ?? "Error",

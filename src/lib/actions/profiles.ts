@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import {
   createProfile,
   deleteProfile,
@@ -32,6 +33,16 @@ export const createProfileAction = async (input: NewProfileParams) => {
     const payload = insertProfileParams.parse(input);
     await createProfile(payload);
     revalidateProfiles();
+  } catch (e) {
+    return handleErrors(e);
+  }
+};
+
+
+export const createProfileOnboardingAction = async (input: NewProfileParams) => {
+  try {
+    const payload = insertProfileParams.parse(input);
+    await createProfile(payload);
   } catch (e) {
     return handleErrors(e);
   }
