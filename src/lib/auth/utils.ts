@@ -4,13 +4,14 @@ import { DefaultSession, getServerSession, NextAuthOptions } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import { redirect } from "next/navigation";
 import GoogleProvider from "next-auth/providers/google";
-import { getUserSubscriptionPlan } from "@/lib/stripe/subscription";
-import { SubscriptionPlan } from '../../config/subscriptions';
 
 declare module "next-auth" {
   interface Session {
     user: DefaultSession["user"] & {
       id: string;
+      grantId?: string | null;
+      profiles?: { id: string }[];
+      subscription?: { stripeCustomerId: string } | null;
     };
   }
 }
@@ -23,8 +24,8 @@ export type AuthSession = {
       email?: string;
       image?: string;
       grantId?: string;
-      profiles?: { id: string };
-      subscription?: { stripeCustomerId: string };
+      profiles?: { id: string }[];
+      subscription?: { stripeCustomerId: string } | null;
     };
   } | null;
 };
@@ -76,12 +77,14 @@ export const getUserAuth = async () => {
 
 export const checkAuth = async () => {
   const { session } = await getUserAuth();
-  
+
   if (!session) redirect("/api/auth/signin");
 
-  if (!session.user.profiles || session.user.profiles.length === 0) redirect("/onboarding")
+  if (!session.user.profiles || session.user.profiles.length === 0)
+    redirect("/onboarding");
 
-  if (!session.user.grantId) redirect("/onboarding/calendar")
+  if (!session.user.grantId) redirect("/onboarding/calendar");
 
-  if (!session.user.subscription?.stripeCustomerId) redirect("/onboarding/subscribe")
+  if (!session.user.subscription?.stripeCustomerId)
+    redirect("/onboarding/subscribe");
 };

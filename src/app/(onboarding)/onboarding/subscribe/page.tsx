@@ -32,15 +32,19 @@ export default async function OnboardingPaymentPage() {
             width={420}
             height={420}
           />
-          <ManageUserSubscriptionButton
-            userId={session.user.id}
-            email={session.user.email || ""}
-            stripePriceId={baseSubscription.stripePriceId}
-            stripeCustomerId={subscriptionPlan?.stripeCustomerId}
-            isSubscribed={!!subscriptionPlan.isSubscribed}
-            isCurrentPlan={subscriptionPlan?.name === baseSubscription.name}
-            onboarding
-          />
+          {session ? (
+            <ManageUserSubscriptionButton
+              userId={session?.user.id}
+              email={session.user.email || ""}
+              stripePriceId={baseSubscription.stripePriceId}
+              stripeCustomerId={subscriptionPlan?.stripeCustomerId}
+              isSubscribed={!!subscriptionPlan.isSubscribed}
+              isCurrentPlan={subscriptionPlan?.name === baseSubscription.name}
+              onboarding
+            />
+          ) : (
+            <p>Something went wrong, please try again later.</p>
+          )}
         </CardContent>
       </Card>
     </div>
