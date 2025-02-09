@@ -1,11 +1,10 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import {
   createProfile,
   deleteProfile,
   updateProfile,
+  createProfileWithAvailability
 } from "@/lib/api/profiles/mutations";
 import {
   ProfileId,
@@ -42,7 +41,7 @@ export const createProfileAction = async (input: NewProfileParams) => {
 export const createProfileOnboardingAction = async (input: NewProfileParams) => {
   try {
     const payload = insertProfileParams.parse(input);
-    await createProfile(payload);
+    await createProfileWithAvailability(payload);
   } catch (e) {
     return handleErrors(e);
   }
