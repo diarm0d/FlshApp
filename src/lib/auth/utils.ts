@@ -4,7 +4,8 @@ import { DefaultSession, getServerSession, NextAuthOptions } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import { redirect } from "next/navigation";
 import GoogleProvider from "next-auth/providers/google";
-import { sessionSchema } from '../../../prisma/zod/session';
+import { getUserSubscriptionPlan } from "@/lib/stripe/subscription";
+import { SubscriptionPlan } from '../../config/subscriptions';
 
 declare module "next-auth" {
   interface Session {
@@ -75,13 +76,12 @@ export const getUserAuth = async () => {
 
 export const checkAuth = async () => {
   const { session } = await getUserAuth();
+  
   if (!session) redirect("/api/auth/signin");
-
-  console.log(session)
 
   if (!session.user.profiles || session.user.profiles.length === 0) redirect("/onboarding")
 
   if (!session.user.grantId) redirect("/onboarding/calendar")
 
-  if (!session.user.subscription.stripeCustomerId) redirect("/onboarding/subscribe")
+  if (!session.user.subscription?.stripeCustomerId) redirect("/onboarding/subscribe")
 };

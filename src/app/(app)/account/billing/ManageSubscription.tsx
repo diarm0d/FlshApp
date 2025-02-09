@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { toast } from "sonner";
@@ -44,9 +43,6 @@ export function ManageUserSubscriptionButton({
           }),
         });
         const session: { url: string } = await res.json();
-        if (onboarding) {
-          window.location.href = "/dashboard";
-        }
         if (session) {
           window.location.href = session.url ?? "/dashboard/billing";
         }

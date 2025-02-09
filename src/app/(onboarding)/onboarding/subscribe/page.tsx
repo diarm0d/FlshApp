@@ -11,7 +11,7 @@ import { getUserSubscriptionPlan } from "@/lib/stripe/subscription";
 import { ManageUserSubscriptionButton } from "@/app/(app)/account/billing/ManageSubscription";
 import { storeSubscriptionPlans } from "@/config/subscriptions";
 
-const CalGif = "/calgif.gif";
+const CalGif = "/calgif2.gif";
 
 export default async function OnboardingPaymentPage() {
   const { session } = await getUserAuth();
