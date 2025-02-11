@@ -21,9 +21,8 @@ export default function AvailableTimeList({
         <EmptyState />
       ) : (
         <ManyAvailableTimeForm
-          optimisticAvailableTimes={
-            optimisticAvailableTimes
-          }
+          optimisticAvailableTimes={optimisticAvailableTimes}
+          addOptimistic={addOptimisticAvailableTime}
         />
       )}
     </>
