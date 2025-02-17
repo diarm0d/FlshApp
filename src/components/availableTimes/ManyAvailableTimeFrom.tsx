@@ -26,8 +26,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { times } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import { updateManyAvailableTimes } from "@/lib/api/availableTimes/mutations";
-
+import { updateAvailableTime } from "@/lib/api/availableTimes/mutations";
 
 const ManyAvailableTimeForm = (
   optimisticAvailableTimes: AvailableTime[],
@@ -93,6 +92,17 @@ const ManyAvailableTimeForm = (
       );
       return;
     }
+
+    const availableTimes: UpdateAvailableTimeParams[] =
+      parsedAvailableTimes.map((res, index) => ({
+        ...res.data,
+        id: availableTimesArray?.[index]?.id ?? "", // Ensure ID exists
+        userId: availableTimesArray?.[index]?.userId ?? "",
+        updatedAt: new Date(),
+      }));
+
+    console.log(availableTimes);
+
     try {
       startMutation(async () => {
         addOptimistic &&
@@ -100,12 +110,16 @@ const ManyAvailableTimeForm = (
             addOptimistic({ data: time, action: "update" });
           });
 
-        const error = await updateManyAvailableTimes(availableTimesArray);
+        availableTimes.forEach(async (time) => {
+          console.log(time);
+          console.log("time.id type:", typeof time.id, time.id);
+          const error = await updateAvailableTime({
+            id: time.id as string,
+            time,
+          });
 
-        onSuccess(
-          "update",
-          error ? { error, values: availableTimes } : undefined
-        );
+          onSuccess("update", error ? { error, values: time } : undefined);
+        });
       });
     } catch (e) {
       if (e instanceof z.ZodError) {

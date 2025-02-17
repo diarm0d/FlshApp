@@ -19,13 +19,8 @@ const SidebarItems = () => {
     <>
       <SidebarLinkGroup links={defaultLinks} />
       {additionalLinks.length > 0
-        ? additionalLinks.map((l) => (
-            <SidebarLinkGroup
-              links={l.links}
-              title={l.title}
-              border
-              key={l.title}
-            />
+        ? additionalLinks.map((l, i) => (
+            <SidebarLinkGroup links={l.links} title={l.title} border key={i} />
           ))
         : null}
     </>
@@ -80,7 +75,7 @@ const SidebarLink = ({
         <div
           className={cn(
             "opacity-0 left-0 h-6 w-[4px] absolute rounded-r-lg bg-primary",
-            active ? "opacity-100" : "",
+            active ? "opacity-100" : ""
           )}
         />
         <link.icon className="h-3.5 mr-1" />
