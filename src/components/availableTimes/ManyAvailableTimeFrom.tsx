@@ -35,7 +35,7 @@ const ManyAvailableTimeForm = (
   const { errors, hasErrors, setErrors, handleChange } =
     useValidatedForm<AvailableTime>(insertAvailableTimeParams);
 
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [pending, startMutation] = useTransition();
 
   const router = useRouter();
@@ -101,7 +101,7 @@ const ManyAvailableTimeForm = (
         updatedAt: new Date(),
       }));
 
-    console.log(availableTimes);
+    setIsLoading(true);
 
     try {
       startMutation(async () => {
@@ -110,20 +110,23 @@ const ManyAvailableTimeForm = (
             addOptimistic({ data: time, action: "update" });
           });
 
-        availableTimes.forEach(async (time) => {
-          console.log(time);
-          console.log("time.id type:", typeof time.id, time.id);
-          const error = await updateAvailableTime({
-            id: time.id as string,
-            time,
-          });
+        const results = await Promise.all(
+          availableTimes.map(async (time) => {
+            const error = await updateAvailableTime(time.id, time);
+            return { error, time };
+          })
+        ).then(()=> {
+          toast.success("Updated your available times!");
+        })
 
-          onSuccess("update", error ? { error, values: time } : undefined);
-        });
+        setIsLoading(false);
       });
     } catch (e) {
+      setIsLoading(false);
       if (e instanceof z.ZodError) {
         setErrors(e.flatten().fieldErrors);
+      } else {
+        toast.error("Something went wrong, please try again");
       }
     }
   };
@@ -136,6 +139,7 @@ const ManyAvailableTimeForm = (
             <AvailableTime
               availableTime={availableTime}
               key={availableTime.id}
+              isLoading={isLoading}
             />
           )
         )}
@@ -154,12 +158,13 @@ export default ManyAvailableTimeForm;
 
 const AvailableTime = ({
   availableTime,
+  isLoading
 }: {
   availableTime: CompleteAvailableTime;
+  isLoading: boolean
 }) => {
-  const optimistic = availableTime.id === "optimistic";
-  const deleting = availableTime.id === "delete";
-  const mutating = optimistic || deleting;
+  console.log(availableTime, typeof(availableTime));
+  const mutating =  isLoading || availableTime.id === "optimistic" || availableTime.id === "delete";
 
   return (
     <>
@@ -167,7 +172,7 @@ const AvailableTime = ({
         className={cn(
           "my-4",
           mutating ? "opacity-30 animate-pulse" : "",
-          deleting ? "text-destructive" : ""
+          availableTime.id === "delete" ? "text-destructive" : ""
         )}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 items-center gap-4">

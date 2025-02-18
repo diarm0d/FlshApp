@@ -45,7 +45,7 @@ export const updateAvailableTime = async (
       where: { id: availableTimeId, userId: session?.user.id! },
       data: newAvailableTime,
     });
-    return { availableTime: a };
+    return a;
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
