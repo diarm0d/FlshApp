@@ -13,7 +13,7 @@ export default function AvailableTimeList({
   availableTimes: CompleteAvailableTime[];
 }) {
   const { optimisticAvailableTimes, addOptimisticAvailableTime } =
-    useOptimisticAvailableTimes<AvailableTime>(availableTimes);
+    useOptimisticAvailableTimes(availableTimes);
 
   return (
     <>
