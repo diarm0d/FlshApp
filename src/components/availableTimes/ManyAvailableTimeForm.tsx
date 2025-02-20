@@ -1,19 +1,15 @@
 import { useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useValidatedForm } from "@/lib/hooks/useValidatedForm";
 
 import {
   type AvailableTime,
   CompleteAvailableTime,
-} from "@/lib/db/schema/availableTimes";
-import {
-  type AvailableTime,
   insertAvailableTimeParams,
+  UpdateAvailableTimeParams,
 } from "@/lib/db/schema/availableTimes";
 
-import { useBackPath } from "@/components/shared/BackButton";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -27,35 +23,28 @@ import { Switch } from "@/components/ui/switch";
 import { times } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { updateAvailableTime } from "@/lib/api/availableTimes/mutations";
+import { TAddOptimistic } from "@/app/(app)/available-times/useOptimisticAvailableTimes";
+import { z } from "zod";
+
+export enum Day {
+  Monday = "Monday",
+  Tuesday = "Tuesday",
+  Wednesday = "Wednesday",
+  Thursday = "Thursday",
+  Friday = "Friday",
+  Saturday = "Saturday",
+  Sunday = "Sunday",
+}
 
 const ManyAvailableTimeForm = (
-  optimisticAvailableTimes: AvailableTime[],
-  addOptimistic?: TAddOptimistic
+  optimisticAvailableTimes: CompleteAvailableTime[],
+  // addOptimistic?: TAddOptimistic
 ) => {
   const { errors, hasErrors, setErrors, handleChange } =
     useValidatedForm<AvailableTime>(insertAvailableTimeParams);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [pending, startMutation] = useTransition();
-
-  const router = useRouter();
-  const backpath = useBackPath("available-times");
-
-  const onSuccess = (
-    action: Action,
-    data?: { error: string; values: AvailableTime }
-  ) => {
-    const failed = Boolean(data?.error);
-    if (failed) {
-      toast.error(`Failed to ${action}`, {
-        description: data?.error ?? "Error",
-      });
-    } else {
-      router.refresh();
-      toast.success(`AvailableTime ${action}d!`);
-      if (action === "delete") router.push(backpath);
-    }
-  };
+  const [, startMutation] = useTransition();
 
   const handleSubmit = async (data: FormData) => {
     setErrors(null);
@@ -85,19 +74,25 @@ const ManyAvailableTimeForm = (
 
     const failedValidation = parsedAvailableTimes.some((res) => !res.success);
     if (failedValidation) {
-      setErrors(
-        parsedAvailableTimes
-          .filter((res) => !res.success)
-          .map((res) => res.error.flatten().fieldErrors)
-      );
+      const zodErrors = parsedAvailableTimes
+        .filter((res) => !res.success)
+        .map((res) => res.error.flatten().fieldErrors)
+        // Reduce the array of error objects into a single object
+        .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
+      setErrors(zodErrors); // Set the combined errors
+
       return;
     }
 
     const availableTimes: UpdateAvailableTimeParams[] =
       parsedAvailableTimes.map((res, index) => ({
         ...res.data,
-        id: availableTimesArray?.[index]?.id ?? "", // Ensure ID exists
-        userId: availableTimesArray?.[index]?.userId ?? "",
+        id: availableTimesArray?.[index]?.id ?? "",
+        day: res.data?.day ?? Day.Monday,
+        fromTime: res.data?.fromTime ?? "09:00",
+        tillTime: res.data?.tillTime ?? "17:00",
+        isActive: res.data?.isActive ?? false,
         updatedAt: new Date(),
       }));
 
@@ -105,19 +100,19 @@ const ManyAvailableTimeForm = (
 
     try {
       startMutation(async () => {
-        addOptimistic &&
-          availableTimes.forEach((time) => {
-            addOptimistic({ data: time, action: "update" });
-          });
+        // addOptimistic &&
+        //   availableTimes.forEach((time) => {
+        //     addOptimistic({ data: time, action: "update" });
+        //   });
 
         const results = await Promise.all(
           availableTimes.map(async (time) => {
             const error = await updateAvailableTime(time.id, time);
             return { error, time };
           })
-        ).then(()=> {
+        ).then(() => {
           toast.success("Updated your available times!");
-        })
+        });
 
         setIsLoading(false);
       });
@@ -134,15 +129,13 @@ const ManyAvailableTimeForm = (
   return (
     <form action={handleSubmit} onChange={handleChange} className={"space-y-8"}>
       <div>
-        {optimisticAvailableTimes.optimisticAvailableTimes.map(
-          (availableTime) => (
-            <AvailableTime
-              availableTime={availableTime}
-              key={availableTime.id}
-              isLoading={isLoading}
-            />
-          )
-        )}
+        {optimisticAvailableTimes.map((availableTime) => (
+          <AvailableTime
+            availableTime={availableTime}
+            key={availableTime.id}
+            isLoading={isLoading}
+          />
+        ))}
       </div>
       <SaveButton errors={hasErrors} />
       {errors && (
@@ -158,13 +151,15 @@ export default ManyAvailableTimeForm;
 
 const AvailableTime = ({
   availableTime,
-  isLoading
+  isLoading,
 }: {
   availableTime: CompleteAvailableTime;
-  isLoading: boolean
+  isLoading: boolean;
 }) => {
-  console.log(availableTime, typeof(availableTime));
-  const mutating =  isLoading || availableTime.id === "optimistic" || availableTime.id === "delete";
+  const mutating =
+    isLoading ||
+    availableTime.id === "optimistic" ||
+    availableTime.id === "delete";
 
   return (
     <>

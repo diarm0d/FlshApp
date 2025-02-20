@@ -5,7 +5,7 @@ import {
 } from "@/lib/db/schema/availableTimes";
 
 import { useOptimisticAvailableTimes } from "@/app/(app)/available-times/useOptimisticAvailableTimes";
-import ManyAvailableTimeForm from "./ManyAvailableTimeFrom";
+import ManyAvailableTimeForm from "./ManyAvailableTimeForm";
 
 export default function AvailableTimeList({
   availableTimes,
@@ -15,13 +15,14 @@ export default function AvailableTimeList({
   const { optimisticAvailableTimes, addOptimisticAvailableTime } =
     useOptimisticAvailableTimes(availableTimes);
 
+
   return (
     <>
       {optimisticAvailableTimes.length === 0 ? (
         <EmptyState />
       ) : (
         <ManyAvailableTimeForm
-          optimisticAvailableTimes={optimisticAvailableTimes}
+          optimisticAvailableTimes={availableTimes}
           addOptimistic={addOptimisticAvailableTime}
         />
       )}
