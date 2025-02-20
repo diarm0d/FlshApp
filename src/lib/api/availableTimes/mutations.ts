@@ -33,7 +33,6 @@ export const updateAvailableTime = async (
   availableTime: UpdateAvailableTimeParams
 ) => {
   const { session } = await getUserAuth();
-  console.log("Raw id before parsing:", id, availableTime);
 
   const { id: availableTimeId } = availableTimeIdSchema.parse({ id });
   const newAvailableTime = updateAvailableTimeSchema.parse({

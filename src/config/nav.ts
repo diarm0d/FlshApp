@@ -23,19 +23,19 @@ export const defaultLinks: SidebarLink[] = [
 ];
 
 export const additionalLinks: AdditionalLinks[] = [
-  {
-    // title: "Entities",
-    links: [
-      // {
-      //   href: "/available-times",
-      //   title: "Availability",
-      //   icon: Clock,
-      // },
-      // {
-      //   href: "/profiles",
-      //   title: "Profile",
-      //   icon: UserPen,
-      // },
-    ],
-  },
+  // {
+  //   // title: "Entities",
+  //   links: [
+  //     // {
+  //     //   href: "/available-times",
+  //     //   title: "Availability",
+  //     //   icon: Clock,
+  //     // },
+  //     // {
+  //     //   href: "/profiles",
+  //     //   title: "Profile",
+  //     //   icon: UserPen,
+  //     // },
+  //   ],
+  // },
 ];

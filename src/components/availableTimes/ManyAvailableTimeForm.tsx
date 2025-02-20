@@ -1,3 +1,4 @@
+"use client";
 import { useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
@@ -23,7 +24,6 @@ import { Switch } from "@/components/ui/switch";
 import { times } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { updateAvailableTime } from "@/lib/api/availableTimes/mutations";
-import { TAddOptimistic } from "@/app/(app)/available-times/useOptimisticAvailableTimes";
 import { z } from "zod";
 
 export enum Day {
@@ -37,9 +37,9 @@ export enum Day {
 }
 
 const ManyAvailableTimeForm = (
-  optimisticAvailableTimes: CompleteAvailableTime[],
-  // addOptimistic?: TAddOptimistic
+  optimisticAvailableTimes: CompleteAvailableTime[]
 ) => {
+  const availableTimesArray = Object.values(optimisticAvailableTimes);
   const { errors, hasErrors, setErrors, handleChange } =
     useValidatedForm<AvailableTime>(insertAvailableTimeParams);
 
@@ -100,11 +100,6 @@ const ManyAvailableTimeForm = (
 
     try {
       startMutation(async () => {
-        // addOptimistic &&
-        //   availableTimes.forEach((time) => {
-        //     addOptimistic({ data: time, action: "update" });
-        //   });
-
         const results = await Promise.all(
           availableTimes.map(async (time) => {
             const error = await updateAvailableTime(time.id, time);
@@ -129,7 +124,7 @@ const ManyAvailableTimeForm = (
   return (
     <form action={handleSubmit} onChange={handleChange} className={"space-y-8"}>
       <div>
-        {optimisticAvailableTimes.map((availableTime) => (
+        {availableTimesArray?.map((availableTime) => (
           <AvailableTime
             availableTime={availableTime}
             key={availableTime.id}

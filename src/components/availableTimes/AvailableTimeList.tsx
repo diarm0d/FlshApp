@@ -1,10 +1,6 @@
 "use client";
-import {
-  type AvailableTime,
-  CompleteAvailableTime,
-} from "@/lib/db/schema/availableTimes";
+import { CompleteAvailableTime } from "@/lib/db/schema/availableTimes";
 
-import { useOptimisticAvailableTimes } from "@/app/(app)/available-times/useOptimisticAvailableTimes";
 import ManyAvailableTimeForm from "./ManyAvailableTimeForm";
 
 export default function AvailableTimeList({
@@ -12,19 +8,12 @@ export default function AvailableTimeList({
 }: {
   availableTimes: CompleteAvailableTime[];
 }) {
-  const { optimisticAvailableTimes, addOptimisticAvailableTime } =
-    useOptimisticAvailableTimes(availableTimes);
-
-
   return (
     <>
-      {optimisticAvailableTimes.length === 0 ? (
+      {availableTimes.length === 0 ? (
         <EmptyState />
       ) : (
-        <ManyAvailableTimeForm
-          optimisticAvailableTimes={availableTimes}
-          addOptimistic={addOptimisticAvailableTime}
-        />
+        <ManyAvailableTimeForm {...availableTimes} />
       )}
     </>
   );
