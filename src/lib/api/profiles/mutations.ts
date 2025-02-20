@@ -35,53 +35,54 @@ export const createProfileWithAvailability = async (
   });
   try {
     const p = await db.profile.create({ data: newProfile });
-
-    await db.availableTime.createMany({
-      data: [
-        {
-          userId: session?.user.id ?? '',
-          day: "Monday",
-          fromTime: "09:00",
-          tillTime: "18:00",
-        },
-        {
-          userId: session?.user.id ?? '',
-          day: "Tuesday",
-          fromTime: "09:00",
-          tillTime: "18:00",
-        },
-        {
-          userId: session?.user.id ?? '',
-          day: "Wednesday",
-          fromTime: "09:00",
-          tillTime: "18:00",
-        },
-        {
-          userId: session?.user.id ?? '',
-          day: "Thursday",
-          fromTime: "09:00",
-          tillTime: "18:00",
-        },
-        {
-          userId: session?.user.id ?? '',
-          day: "Friday",
-          fromTime: "09:00",
-          tillTime: "18:00",
-        },
-        {
-          userId: session?.user.id ?? '',
-          day: "Saturday",
-          fromTime: "09:00",
-          tillTime: "18:00",
-        },
-        {
-          userId: session?.user.id ?? '',
-          day: "Sunday",
-          fromTime: "09:00",
-          tillTime: "18:00",
-        },
-      ],
-    });
+    if (session?.user.id) {
+      await db.availableTime.createMany({
+        data: [
+          {
+            userId: session?.user.id ?? "",
+            day: "Monday",
+            fromTime: "09:00",
+            tillTime: "18:00",
+          },
+          {
+            userId: session?.user.id ?? "",
+            day: "Tuesday",
+            fromTime: "09:00",
+            tillTime: "18:00",
+          },
+          {
+            userId: session?.user.id ?? "",
+            day: "Wednesday",
+            fromTime: "09:00",
+            tillTime: "18:00",
+          },
+          {
+            userId: session?.user.id ?? "",
+            day: "Thursday",
+            fromTime: "09:00",
+            tillTime: "18:00",
+          },
+          {
+            userId: session?.user.id ?? "",
+            day: "Friday",
+            fromTime: "09:00",
+            tillTime: "18:00",
+          },
+          {
+            userId: session?.user.id ?? "",
+            day: "Saturday",
+            fromTime: "09:00",
+            tillTime: "18:00",
+          },
+          {
+            userId: session?.user.id ?? "",
+            day: "Sunday",
+            fromTime: "09:00",
+            tillTime: "18:00",
+          },
+        ],
+      });
+    }
     return { profile: p };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
