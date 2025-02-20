@@ -145,7 +145,7 @@ model Booking {
   email     String
   startTime Int
   endTime   Int
-  isPaid    Boolean?
+  isPaid    Boolean  @default(false)
   flash     Flash    @relation(fields: [flashId], references: [id])
   flashId   String
   userId    String

@@ -7,7 +7,7 @@ export const bookingSchema = z.object({
   email: z.string(),
   startTime: z.number().int(),
   endTime: z.number().int(),
-  isPaid: z.boolean().nullish(),
+  isPaid: z.boolean(),
   flashId: z.string(),
   userId: z.string(),
   createdAt: z.date(),
