@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { CompleteProfile, relatedProfileSchema, CompleteUser, relatedUserSchema } from "./index"
+import { CompleteProfile, relatedProfileSchema, CompleteUser, relatedUserSchema, CompleteBooking, relatedBookingSchema } from "./index"
 
 export const flashSchema = z.object({
   id: z.string(),
@@ -15,6 +15,7 @@ export const flashSchema = z.object({
 export interface CompleteFlash extends z.infer<typeof flashSchema> {
   profile: CompleteProfile
   user: CompleteUser
+  Booking: CompleteBooking[]
 }
 
 /**
@@ -25,4 +26,5 @@ export interface CompleteFlash extends z.infer<typeof flashSchema> {
 export const relatedFlashSchema: z.ZodSchema<CompleteFlash> = z.lazy(() => flashSchema.extend({
   profile: relatedProfileSchema,
   user: relatedUserSchema,
+  Booking: relatedBookingSchema.array(),
 }))
