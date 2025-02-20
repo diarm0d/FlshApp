@@ -47,6 +47,7 @@ export const updateAvailableTimeAction = async (input: UpdateAvailableTimeParams
   }
 };
 
+
 export const deleteAvailableTimeAction = async (input: AvailableTimeId) => {
   try {
     const payload = availableTimeIdSchema.parse({ id: input });

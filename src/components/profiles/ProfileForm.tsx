@@ -14,8 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useBackPath } from "@/components/shared/BackButton";
 
-import { Checkbox } from "@/components/ui/checkbox";
-
 import { type Profile, insertProfileParams } from "@/lib/db/schema/profiles";
 import {
   createProfileAction,
