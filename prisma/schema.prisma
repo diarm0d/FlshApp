@@ -64,6 +64,7 @@ model User {
 
   subscription   Subscription?
   availableTimes AvailableTime[]
+  bookings       Booking[]
 }
 
 model VerificationToken {
@@ -90,16 +91,17 @@ model Profile {
 }
 
 model Flash {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String
   flashImage  String
-  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId   String
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Booking     Booking[]
 
   @@index([userId])
 }
@@ -135,4 +137,21 @@ enum Day {
   Friday
   Saturday
   Sunday
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  startTime Int
+  endTime   Int
+  isPaid    Boolean  @default(false)
+  flash     Flash    @relation(fields: [flashId], references: [id])
+  flashId   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
