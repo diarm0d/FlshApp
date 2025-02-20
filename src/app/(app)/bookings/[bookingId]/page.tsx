@@ -15,12 +15,13 @@ export const revalidate = 0;
 export default async function BookingPage({
   params,
 }: {
-  params: { bookingId: string };
+  params: Promise<{ bookingId: string }>;
 }) {
+   const { bookingId } = await params;
 
   return (
     <main className="overflow-auto">
-      <Booking id={params.bookingId} />
+      <Booking id={bookingId} />
     </main>
   );
 }
