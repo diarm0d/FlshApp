@@ -56,7 +56,7 @@ export default async function FlashPage({
             </div>
           </div>
           <div className="grid grid-col-1 gap-4">
-            <Link href={`${slug}/checkout`}>
+            <Link href={`${flashId}/booking`}>
               <Button className="w-full" size="lg">
                 Book Appointment
               </Button>
