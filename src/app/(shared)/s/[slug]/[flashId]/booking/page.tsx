@@ -10,8 +10,6 @@ import { notFound } from "next/navigation";
 import { getAvailableTimesById } from "@/lib/api/availableTimes/queries";
 import { CalendarWrapper } from "@/components/calendar/CalendarWrapper";
 
-
-
 export default async function BookingPage({
   params,
   searchParams,
@@ -21,11 +19,11 @@ export default async function BookingPage({
 }) {
   const { flashId } = await params;
   const flash = await getFlashById(flashId);
-  console.log(flash)
+  console.log(flash);
   if (flash === null) notFound();
-  const availability = await getAvailableTimesById(flash.flash?.userId ?? '');
-
-  console.log(availability);
+  const { availableTimes } = await getAvailableTimesById(
+    flash.flash?.userId ?? ""
+  );
 
   const { date, time } = await searchParams;
   const selectedDate = date ? new Date(date) : new Date();
@@ -120,8 +118,8 @@ export default async function BookingPage({
             </Card>
           ) : (
             <Card className="max-w-[1000px] w-full mx-auto">
-              <CardContent className="p-6  min-h-[450px] md:grid md:grid-cols-[1fr,auto,1fr,auto,1fr]">
-                <div>
+              <CardContent className="p-10 min-h-[450px] grid grid-cols-1">
+                <div className="px-4">
                   <Avatar className="h-24 w-24">
                     <AvatarImage
                       alt={flash.flash?.profile?.name}
@@ -161,12 +159,17 @@ export default async function BookingPage({
                     </p>
                   </div>
                 </div>
-                <Separator orientation="vertical" className="h-full w-[1px]" />
+                <Separator
+                  orientation="horizontal"
+                  className="w-full h-[1px] my-8"
+                />
                 <div className="px-4">
-                  <CalendarWrapper availability={availability as any} />
-                  CalendarWrapper component
+                  <CalendarWrapper availability={availableTimes} />
                 </div>
-                <Separator orientation="vertical" className="h-full w-[1px]" />
+                <Separator
+                  orientation="horizontal"
+                  className="w-full h-[1px] my-8"
+                />
                 <div className="px-4">
                   {/* <TimeTable
                 selectedDate={selectedDate}
