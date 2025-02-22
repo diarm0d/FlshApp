@@ -9,6 +9,7 @@ import { getFlashById } from "@/lib/api/flashes/queries";
 import { notFound } from "next/navigation";
 import { getAvailableTimesById } from "@/lib/api/availableTimes/queries";
 import { CalendarWrapper } from "@/components/calendar/CalendarWrapper";
+import Image from "next/image";
 
 export default async function BookingPage({
   params,
@@ -43,6 +44,17 @@ export default async function BookingPage({
             <Card className="max-w-[800px] w-full mx-auto">
               <CardContent className="p-6  min-h-[450px] grid md:grid-cols-[1fr,auto,1fr] gap-4">
                 <div>
+                  <div className="flex items-center justify-center">
+                    <div className="w-lg sm:mw-xl">
+                      <Image
+                        alt={flash.flash?.title ?? ""}
+                        className="aspect-square object-cover border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
+                        height={150}
+                        src={flash.flash?.flashImage ?? ""}
+                        width={150}
+                      />
+                    </div>
+                  </div>
                   <Avatar className="h-24 w-24">
                     <AvatarImage
                       alt={flash.flash?.profile?.name}
@@ -118,8 +130,39 @@ export default async function BookingPage({
           ) : (
             <Card className="max-w-[1000px] w-full mx-auto">
               <CardContent className="p-10 min-h-[450px] grid grid-cols-1">
-                <div className="px-4">
-                  <Avatar className="h-24 w-24">
+                <div>
+                  <div className="flex items-center justify-center">
+                    <div className="w-lg sm:mw-xl">
+                      <Image
+                        alt={flash.flash?.title ?? ""}
+                        className="aspect-square object-cover border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
+                        height={150}
+                        src={flash.flash?.flashImage ?? ""}
+                        width={150}
+                      />
+                    </div>
+                    <div className="ml-4">
+                      <Avatar className="h-24 w-24">
+                        <AvatarImage
+                          alt={flash.flash?.profile?.name}
+                          src={flash.flash?.user?.image ?? undefined}
+                        />
+                        <AvatarFallback>
+                          {flash.flash?.profile?.name}
+                        </AvatarFallback>
+                      </Avatar>
+                      <p className="text-sm font-medium text-muted-foreground mt-1">
+                        {flash.flash?.profile?.name}
+                      </p>
+                      <h1 className="text-xl font-semibold mt-2">
+                        Tattoo of {flash.flash?.title}
+                      </h1>
+                      <p className="text-sm font-medium text-muted-foreground mt-1">
+                        {flash.flash?.description}
+                      </p>
+                    </div>
+                  </div>
+                  {/* <Avatar className="h-24 w-24">
                     <AvatarImage
                       alt={flash.flash?.profile?.name}
                       src={flash.flash?.user?.image ?? undefined}
@@ -136,7 +179,7 @@ export default async function BookingPage({
                   </h1>
                   <p className="text-sm font-medium text-muted-foreground mt-1">
                     {flash.flash?.description}
-                  </p>
+                  </p> */}
                   <div className="mt-5 flex flex-col gap-y-3">
                     <p className="flex items-center">
                       <CalendarX2 className="size-4 mr-2 text-primary" />
