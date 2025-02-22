@@ -15,11 +15,10 @@ export default async function BookingPage({
   searchParams,
 }: {
   params: Promise<{ flashId: string }>;
-  searchParams: { date?: string; time?: string };
+  searchParams: Promise<{ date?: string; time?: string }>;
 }) {
   const { flashId } = await params;
   const flash = await getFlashById(flashId);
-  console.log(flash);
   if (flash === null) notFound();
   const { availableTimes } = await getAvailableTimesById(
     flash.flash?.userId ?? ""
