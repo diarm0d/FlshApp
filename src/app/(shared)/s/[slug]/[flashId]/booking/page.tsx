@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import { getAvailableTimesById } from "@/lib/api/availableTimes/queries";
 import { CalendarWrapper } from "@/components/calendar/CalendarWrapper";
 import Image from "next/image";
+import TimeTable from "@/components/calendar/TimeTable";
 
 export default async function BookingPage({
   params,
@@ -131,7 +132,7 @@ export default async function BookingPage({
             <Card className="max-w-[1000px] w-full mx-auto">
               <CardContent className="p-10 min-h-[450px] grid grid-cols-1">
                 <div>
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center">
                     <div className="w-lg sm:mw-xl">
                       <Image
                         alt={flash.flash?.title ?? ""}
@@ -162,24 +163,6 @@ export default async function BookingPage({
                       </p>
                     </div>
                   </div>
-                  {/* <Avatar className="h-24 w-24">
-                    <AvatarImage
-                      alt={flash.flash?.profile?.name}
-                      src={flash.flash?.user?.image ?? undefined}
-                    />
-                    <AvatarFallback>
-                      {flash.flash?.profile?.name}
-                    </AvatarFallback>
-                  </Avatar>
-                  <p className="text-sm font-medium text-muted-foreground mt-1">
-                    {flash.flash?.profile?.name}
-                  </p>
-                  <h1 className="text-xl font-semibold mt-2">
-                    Tattoo of {flash.flash?.title}
-                  </h1>
-                  <p className="text-sm font-medium text-muted-foreground mt-1">
-                    {flash.flash?.description}
-                  </p> */}
                   <div className="mt-5 flex flex-col gap-y-3">
                     <p className="flex items-center">
                       <CalendarX2 className="size-4 mr-2 text-primary" />
@@ -205,7 +188,7 @@ export default async function BookingPage({
                   orientation="horizontal"
                   className="w-full h-[1px] my-8"
                 />
-                <div className="px-4">
+                <div className="px-4 flex justify-center">
                   <CalendarWrapper availability={availableTimes} />
                 </div>
                 <Separator
@@ -213,20 +196,19 @@ export default async function BookingPage({
                   className="w-full h-[1px] my-8"
                 />
                 <div className="px-4">
-                  {/* <TimeTable
-                selectedDate={selectedDate}
-                userName={username}
-                duration={data.duration}
-              /> */}
-                  TimeTable component
+                  <TimeTable
+                    userId={flash.flash?.userId ?? ""}
+                    selectedDate={selectedDate}
+                    duration={flash.flash?.profile?.sessionDuration ?? 240}
+                  />
                 </div>
               </CardContent>
             </Card>
           )}
         </div>
-        <pre className="bg-secondary p-4 rounded-sm shadow-sm text-secondary-foreground break-all whitespace-break-spaces">
+        {/* <pre className="bg-secondary p-4 rounded-sm shadow-sm text-secondary-foreground break-all whitespace-break-spaces">
           {JSON.stringify(flash, null, 2)}
-        </pre>
+        </pre> */}
       </div>
     </main>
   );
