@@ -1,3 +1,4 @@
+"use server";
 import { db } from "@/lib/db/index";
 import { 
   BookingId, 
@@ -8,6 +9,9 @@ import {
   bookingIdSchema 
 } from "@/lib/db/schema/bookings";
 import { getUserAuth } from "@/lib/auth/utils";
+import { redirect } from "next/navigation";
+import { nylas } from "@/lib/nylas/nylas"
+import { Timespan } from "nylas";
 
 export const createBooking = async (booking: NewBookingParams) => {
   const { session } = await getUserAuth();
@@ -48,4 +52,55 @@ export const deleteBooking = async (id: BookingId) => {
     throw { error: message };
   }
 };
+
+export async function createBookingAction(formData: FormData) {
+  const userData = await db.user.findUnique({
+    where: {
+      id: formData.get("userId") as string,
+    },
+    select: {
+      grantEmail: true,
+      grantId: true,
+    },
+  });
+
+  if (!userData) {
+    throw new Error("User not found");
+  }
+
+
+  const customTitle = `${formData.get("name")} | ${formData.get("flashName")}`;
+
+  const fromTime = formData.get("fromTime") as string;
+  const eventDate = formData.get("eventDate") as string;
+  const meetingLength = Number(formData.get("meetingLength"));
+  const provider = formData.get("provider");
+
+  const startDateTime = new Date(`${eventDate}T${fromTime}:00`);
+  const endDateTime = new Date(startDateTime.getTime() + meetingLength * 60000);
+
+  await nylas.events.create({
+    identifier: userData?.grantId as string,
+    requestBody: {
+      title: customTitle,
+      description: formData.get("flashName") as string,
+      when: {
+        startTime: Math.floor(startDateTime.getTime() / 1000),
+        endTime: Math.floor(endDateTime.getTime() / 1000),
+      } as Timespan,
+      participants: [
+        {
+          name: formData.get("name") as string,
+          email: formData.get("email") as string,
+          status: "yes",
+        },
+      ],
+    },
+    queryParams: {
+      calendarId: userData.grantEmail as string,
+      notifyParticipants: true,
+    },
+  });
+  return redirect("/success");
+}
 

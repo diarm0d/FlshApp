@@ -3,7 +3,6 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { CalendarX2, ClockIcon, MapPin } from "lucide-react";
 import { getFlashById } from "@/lib/api/flashes/queries";
 import { notFound } from "next/navigation";
@@ -11,6 +10,9 @@ import { getAvailableTimesById } from "@/lib/api/availableTimes/queries";
 import { CalendarWrapper } from "@/components/calendar/CalendarWrapper";
 import Image from "next/image";
 import TimeTable from "@/components/calendar/TimeTable";
+import {
+  createBookingAction
+} from "@/lib/api/bookings/mutations";
 
 export default async function BookingPage({
   params,
@@ -86,21 +88,28 @@ export default async function BookingPage({
                   </div>
                 </div>
                 <Separator orientation="vertical" className="h-full w-[1px]" />
-                <form className="flex flex-col gap-y-4">
-                  {/* <input type="hidden" name="fromTime" value={time} />
-                <input type="hidden" name="eventDate" value={date} />
-                <input
-                  type="hidden"
-                  name="meetingLength"
-                  value={data.duration}
-                />
-                <input type="hidden" name="userName" value={username} />
-                <input type="hidden" name="eventTypeId" value={data.id} />
-                <input
-                  type="hidden"
-                  name="provider"
-                  value={data.videoCallSoftware}
-                /> */}
+                <form
+                  action={createBookingAction}
+                  className="flex flex-col gap-y-4"
+                >
+                  <input type="hidden" name="fromTime" value={time} />
+                  <input type="hidden" name="eventDate" value={date} />
+                  <input
+                    type="hidden"
+                    name="meetingLength"
+                    value={flash.flash?.profile?.sessionDuration}
+                  />
+                  <input
+                    type="hidden"
+                    name="userId"
+                    value={flash.flash?.userId}
+                  />
+                  <input type="hidden" name="flashId" value={flash.flash?.id} />
+                  <input
+                    type="hidden"
+                    name="flashTitle"
+                    value={flash.flash?.title}
+                  />
                   <div className="flex flex-col gap-y-2">
                     <Label>Your Name</Label>
                     <Input name="name" placeholder="Your name" />
@@ -113,9 +122,6 @@ export default async function BookingPage({
                     Book Appointment
                   </Button>
                 </form>
-                <div>Booking page</div>
-                <Separator orientation="vertical" className="h-full w-[1px]" />
-                <div>Booking page</div>
               </CardContent>
             </Card>
           ) : (
