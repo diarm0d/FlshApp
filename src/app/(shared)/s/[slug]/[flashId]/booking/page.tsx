@@ -142,46 +142,34 @@ export default async function BookingPage({
                         width={150}
                       />
                     </div>
-                    <div className="ml-4">
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage
-                          alt={flash.flash?.profile?.name}
-                          src={flash.flash?.user?.image ?? undefined}
-                        />
-                        <AvatarFallback>
-                          {flash.flash?.profile?.name}
-                        </AvatarFallback>
-                      </Avatar>
-                      <p className="text-sm font-medium text-muted-foreground mt-1">
-                        {flash.flash?.profile?.name}
-                      </p>
+                    <div className="ml-8">
                       <h1 className="text-xl font-semibold mt-2">
                         Tattoo of {flash.flash?.title}
                       </h1>
                       <p className="text-sm font-medium text-muted-foreground mt-1">
-                        {flash.flash?.description}
+                        By {flash.flash?.profile?.name}
                       </p>
+                      <div className="mt-5 flex flex-col gap-y-3">
+                        <p className="flex items-center">
+                          <CalendarX2 className="size-4 mr-2 text-primary" />
+                          <span className="text-sm font-medium text-muted-foreground">
+                            {formattedDate}
+                          </span>
+                        </p>
+                        <p className="flex items-center">
+                          <ClockIcon className="size-4 mr-2 text-primary" />
+                          <span className="text-sm font-medium text-muted-foreground">
+                            {flash.flash?.profile?.sessionDuration} Minutes
+                          </span>
+                        </p>
+                        <p className="flex items-center">
+                          <MapPin className="size-4 mr-2 text-primary" />
+                          <span className="text-sm font-medium text-muted-foreground">
+                            Berlin
+                          </span>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-5 flex flex-col gap-y-3">
-                    <p className="flex items-center">
-                      <CalendarX2 className="size-4 mr-2 text-primary" />
-                      <span className="text-sm font-medium text-muted-foreground">
-                        January 1, 2025
-                      </span>
-                    </p>
-                    <p className="flex items-center">
-                      <ClockIcon className="size-4 mr-2 text-primary" />
-                      <span className="text-sm font-medium text-muted-foreground">
-                        60 Minutes
-                      </span>
-                    </p>
-                    <p className="flex items-center">
-                      <MapPin className="size-4 mr-2 text-primary" />
-                      <span className="text-sm font-medium text-muted-foreground">
-                        Berlin
-                      </span>
-                    </p>
                   </div>
                 </div>
                 <Separator
