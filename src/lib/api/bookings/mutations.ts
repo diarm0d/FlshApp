@@ -74,10 +74,11 @@ export async function createBookingAction(formData: FormData) {
   const fromTime = formData.get("fromTime") as string;
   const eventDate = formData.get("eventDate") as string;
   const meetingLength = Number(formData.get("meetingLength"));
-  const provider = formData.get("provider");
 
   const startDateTime = new Date(`${eventDate}T${fromTime}:00`);
   const endDateTime = new Date(startDateTime.getTime() + meetingLength * 60000);
+
+  // create in DB also
 
   await nylas.events.create({
     identifier: userData?.grantId as string,
