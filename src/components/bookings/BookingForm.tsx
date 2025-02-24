@@ -170,7 +170,7 @@ const BookingForm = ({
           <div className="h-6" />
         )}
       </div>
-        <div>
+        {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -190,8 +190,8 @@ const BookingForm = ({
         ) : (
           <div className="h-6" />
         )}
-      </div>
-        <div>
+      </div> */}
+        {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -211,7 +211,7 @@ const BookingForm = ({
         ) : (
           <div className="h-6" />
         )}
-      </div>
+      </div> */}
 <div>
         <Label
           className={cn(
