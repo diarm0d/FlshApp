@@ -9,8 +9,8 @@ const baseSchema = bookingSchema.omit(timestamps)
 
 export const insertBookingSchema = baseSchema.omit({ id: true });
 export const insertBookingParams = baseSchema.extend({
-  startTime: z.coerce.number(),
-  endTime: z.coerce.number(),
+  startTime: z.coerce.date(),
+  endTime: z.coerce.date(),
   isPaid: z.coerce.boolean(),
   flashId: z.coerce.string().min(1)
 }).omit({ 
@@ -20,8 +20,8 @@ export const insertBookingParams = baseSchema.extend({
 
 export const updateBookingSchema = baseSchema;
 export const updateBookingParams = updateBookingSchema.extend({
-  startTime: z.coerce.number(),
-  endTime: z.coerce.number(),
+  startTime: z.coerce.date(),
+  endTime: z.coerce.date(),
   isPaid: z.coerce.boolean(),
   flashId: z.coerce.string().min(1)
 }).omit({ 
