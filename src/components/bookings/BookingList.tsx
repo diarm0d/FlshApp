@@ -12,6 +12,8 @@ import { useOptimisticBookings } from "@/app/(app)/bookings/useOptimisticBooking
 import { Button } from "@/components/ui/button";
 import BookingForm from "./BookingForm";
 import { PlusIcon } from "lucide-react";
+import Image from "next/image";
+import { format } from "date-fns";
 
 type TOpenModal = (booking?: Booking) => void;
 
@@ -53,9 +55,9 @@ export default function BookingList({
         />
       </Modal>
       <div className="absolute right-0 top-0 ">
-        <Button onClick={() => openModal()} variant={"outline"}>
+        {/* <Button onClick={() => openModal()} variant={"outline"}>
           +
-        </Button>
+        </Button> */}
       </div>
       {optimisticBookings.length === 0 ? (
         <EmptyState openModal={openModal} />
@@ -95,17 +97,42 @@ const Booking = ({
       className={cn(
         "flex justify-between my-2",
         mutating ? "opacity-30 animate-pulse" : "",
-        deleting ? "text-destructive" : "",
+        deleting ? "text-destructive" : ""
       )}
     >
-      <div className="w-full">
+      <div
+        key={booking.id}
+        className="flex items-center w-full gap-4 p-4 rounded-lg border bg-card"
+      >
+        <div className="relative h-16 w-16 rounded-md overflow-hidden">
+          <Image
+            src={booking.flash.flashImage}
+            alt={booking.flash.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-lg">{booking.flash.title}</h3>
+          <div className="grid gap-1">
+            <p className="text-sm text-muted-foreground">
+              {booking.name} • {booking.email}
+            </p>
+            <p className="text-sm">
+              {format(new Date(booking.startTime), "h:mm a")} -{" "}
+              {format(new Date(booking.endTime), "h:mm a")}
+            </p>
+          </div>
+        </div>
+      </div>
+      {/* <div className="w-full">
         <div>{booking.name}</div>
       </div>
       <Button variant={"link"} asChild>
         <Link href={ basePath + "/" + booking.id }>
           Edit
         </Link>
-      </Button>
+      </Button> */}
     </li>
   );
 };
