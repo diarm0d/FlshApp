@@ -143,8 +143,8 @@ model Booking {
   id        String   @id @default(cuid())
   name      String
   email     String
-  startTime Int
-  endTime   Int
+  startTime DateTime
+  endTime   DateTime
   isPaid    Boolean  @default(false)
   flash     Flash    @relation(fields: [flashId], references: [id])
   flashId   String

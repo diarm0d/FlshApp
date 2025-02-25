@@ -8,6 +8,11 @@ export const getAvailableTimes = async () => {
   return { availableTimes: a };
 };
 
+export const getAvailableTimesById = async (id: string) => {
+  const a = await db.availableTime.findMany({ where: {userId: id}});
+  return { availableTimes: a };
+};
+
 export const getAvailableTimeById = async (id: AvailableTimeId) => {
   const { session } = await getUserAuth();
   const { id: availableTimeId } = availableTimeIdSchema.parse({ id });
@@ -15,5 +20,4 @@ export const getAvailableTimeById = async (id: AvailableTimeId) => {
     where: { id: availableTimeId, userId: session?.user.id!}});
   return { availableTime: a };
 };
-
 
