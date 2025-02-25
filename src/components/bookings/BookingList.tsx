@@ -20,15 +20,15 @@ type TOpenModal = (booking?: Booking) => void;
 export default function BookingList({
   bookings,
   flashes,
-  flashId 
+  flashId,
 }: {
   bookings: CompleteBooking[];
   flashes: Flash[];
-  flashId?: FlashId 
+  flashId?: FlashId;
 }) {
   const { optimisticBookings, addOptimisticBooking } = useOptimisticBookings(
     bookings,
-    flashes 
+    flashes
   );
   const [open, setOpen] = useState(false);
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
@@ -51,7 +51,7 @@ export default function BookingList({
           openModal={openModal}
           closeModal={closeModal}
           flashes={flashes}
-        flashId={flashId}
+          flashId={flashId}
         />
       </Modal>
       <div className="absolute right-0 top-0 ">
@@ -64,11 +64,7 @@ export default function BookingList({
       ) : (
         <ul>
           {optimisticBookings.map((booking) => (
-            <Booking
-              booking={booking}
-              key={booking.id}
-              openModal={openModal}
-            />
+            <Booking booking={booking} key={booking.id} openModal={openModal} />
           ))}
         </ul>
       )}
@@ -90,7 +86,6 @@ const Booking = ({
   const basePath = pathname.includes("bookings")
     ? pathname
     : pathname + "/bookings/";
-
 
   return (
     <li
@@ -119,7 +114,12 @@ const Booking = ({
               {booking.name} • {booking.email}
             </p>
             <p className="text-sm">
-              {format(new Date(booking.startTime), "h:mm a")} -{" "}
+              {booking.startTime.toLocaleDateString("en-US", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })} • {format(new Date(booking.startTime), "h:mm a")} -{" "}
               {format(new Date(booking.endTime), "h:mm a")}
             </p>
           </div>
@@ -148,7 +148,8 @@ const EmptyState = ({ openModal }: { openModal: TOpenModal }) => {
       </p>
       <div className="mt-6">
         <Button onClick={() => openModal()}>
-          <PlusIcon className="h-4" /> New Bookings </Button>
+          <PlusIcon className="h-4" /> New Bookings{" "}
+        </Button>
       </div>
     </div>
   );
