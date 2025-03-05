@@ -200,12 +200,12 @@ export default async function Home() {
           </Card>
         </div>
       </div>
-      {session ? (
+      {/* {session ? (
         <pre className="bg-secondary p-4 rounded-sm shadow-sm text-secondary-foreground break-all whitespace-break-spaces">
           {JSON.stringify(session, null, 2)}
         </pre>
       ) : null}
-      <SignIn />
+      <SignIn /> */}
     </main>
   );
 }
