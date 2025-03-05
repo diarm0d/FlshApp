@@ -140,16 +140,16 @@ const Booking = ({
 const EmptyState = ({ openModal }: { openModal: TOpenModal }) => {
   return (
     <div className="text-center">
-      <h3 className="mt-2 text-sm font-semibold text-secondary-foreground">
-        No bookings
+      <h3 className="mt-2 text-lg font-semibold text-secondary-foreground">
+        No bookings for next two weeks
       </h3>
       <p className="mt-1 text-sm text-muted-foreground">
-        Get started by creating a new booking.
+        Get started by sharing your profile on your socials.
       </p>
       <div className="mt-6">
-        <Button onClick={() => openModal()}>
+        {/* <Button onClick={() => openModal()}>
           <PlusIcon className="h-4" /> New Bookings{" "}
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
