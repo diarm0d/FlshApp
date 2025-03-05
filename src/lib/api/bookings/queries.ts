@@ -1,7 +1,7 @@
 import { db } from "@/lib/db/index";
 import { getUserAuth } from "@/lib/auth/utils";
 import { type BookingId, bookingIdSchema } from "@/lib/db/schema/bookings";
-import { startOfWeek, endOfWeek, addWeeks } from "date-fns";
+import { startOfMonth, endOfMonth, addWeeks } from "date-fns";
 
 export const getBookings = async () => {
   const { session } = await getUserAuth();
@@ -42,4 +42,45 @@ export const getBookingsByTwoWeeks = async () => {
     }
   });
   return { bookings: b };
+};
+
+export const getBookingsThisMonth = async () => {
+  const { session } = await getUserAuth();
+
+  const today = new Date();
+  const startOfCurrentMonth = startOfMonth(today);
+  const endOfCurrentMonth = endOfMonth(today);
+
+  const bookings = await db.booking.findMany({
+    where: {
+      startTime: {
+        gte: startOfCurrentMonth, // Start of this month
+        lte: endOfCurrentMonth,   // End of this month
+      },
+      userId: session?.user.id!,
+    },
+    include: { flash: true },
+    orderBy: {
+      startTime: 'asc'
+    }
+  });
+
+  return { bookings };
+};
+
+export const getLatestBookings = async () => {
+  const { session } = await getUserAuth();
+
+  const bookings = await db.booking.findMany({
+    where: {
+      userId: session?.user.id!,
+    },
+    include: { flash: true },
+    orderBy: {
+      createdAt: 'desc', // Order by latest createdAt
+    },
+    take: 5, // Limit to 5 latest bookings
+  });
+
+  return { bookings };
 };

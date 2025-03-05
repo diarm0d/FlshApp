@@ -38,6 +38,18 @@ export default function BookingList({
   };
   const closeModal = () => setOpen(false);
 
+  // Group bookings by day
+  const groupedBookings = optimisticBookings.reduce<
+    Record<string, CompleteBooking[]>
+  >((acc, booking) => {
+    const dateKey = format(new Date(booking.startTime), "EEEE, MMMM d"); // Example: "Monday, March 5"
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
+    }
+    acc[dateKey].push(booking);
+    return acc;
+  }, {});
+
   return (
     <div>
       <Modal
@@ -62,12 +74,30 @@ export default function BookingList({
       {optimisticBookings.length === 0 ? (
         <EmptyState openModal={openModal} />
       ) : (
-        <ul>
-          {optimisticBookings.map((booking) => (
-            <Booking booking={booking} key={booking.id} openModal={openModal} />
+        <>
+          {Object.entries(groupedBookings).map(([date, bookings]) => (
+            <div key={date} className="mb-6">
+              <h2 className="text-xl font-semibold text-secondary-foreground mb-2">
+                {date}
+              </h2>
+              <ul className="space-y-2">
+                {bookings.map((booking) => (
+                  <Booking
+                    key={booking.id}
+                    booking={booking}
+                    openModal={openModal}
+                  />
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </>
       )}
+      {/* // <ul>
+        //   {optimisticBookings.map((booking) => (
+        //     <Booking booking={booking} key={booking.id} openModal={openModal} />
+        //   ))}
+        // </ul> */}
     </div>
   );
 }
@@ -119,7 +149,8 @@ const Booking = ({
                 day: "numeric",
                 month: "long",
                 year: "numeric",
-              })} • {format(new Date(booking.startTime), "h:mm a")} -{" "}
+              })}{" "}
+              • {format(new Date(booking.startTime), "h:mm a")} -{" "}
               {format(new Date(booking.endTime), "h:mm a")}
             </p>
           </div>
