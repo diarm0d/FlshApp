@@ -2,10 +2,8 @@ import SignIn from "@/components/auth/SignIn";
 import { getUserAuth } from "@/lib/auth/utils";
 import Image from "next/image";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { WeeklyCalendar } from "@/components/dashboard/WeeklyDashboard";
 
 import {
@@ -13,7 +11,6 @@ import {
   getLatestBookings,
 } from "@/lib/api/bookings/queries";
 import { getProfileById } from "@/lib/api/profiles/queries";
-
 
 const data = [
   { name: "Jan", total: 6000 },
@@ -58,17 +55,30 @@ const recentSales = [
   },
 ];
 
+const getNextSevenDays = (): Date[] => {
+  const dates: Date[] = [];
+  const today = new Date();
+
+  for (let i = 0; i <= 7; i++) {
+    const nextDate = new Date(today);
+    nextDate.setDate(today.getDate() + i);
+    dates.push(nextDate);
+  }
+
+  return dates;
+};
+
 export default async function Home() {
   const { session } = await getUserAuth();
   if (!session) return <SignIn />;
-  const profileId = session.user.profiles?.[0]?.id || ''
-
+  const profileId = session.user.profiles?.[0]?.id || "";
 
   const { profile } = await getProfileById(profileId);
   const { bookings } = await getBookingsThisMonth();
   const { bookings: recentBookings } = await getLatestBookings();
 
   const depositAmt = profile?.depositAmount ?? 50;
+  const days = getNextSevenDays();
 
   return (
     <main className="space-y-4">
@@ -77,7 +87,7 @@ export default async function Home() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">Bookings</CardTitle>
-              <CreditCard className="w-4 h-4 text-muted-foreground" />
+              <Users className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{bookings.length}</div>
@@ -89,7 +99,7 @@ export default async function Home() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-medium">Deposits</CardTitle>
-              <Users className="w-4 h-4 text-muted-foreground" />
+              <CreditCard className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
@@ -116,49 +126,13 @@ export default async function Home() {
               </p> */}
             </CardContent>
           </Card>
-          {/* <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-base font-medium">
-                Page Views
-              </CardTitle>
-              <Users className="w-4 h-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">+17500</div>
-              <p className="text-xs text-muted-foreground">
-                +30.1% from last month
-              </p>
-            </CardContent>
-          </Card> */}
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
-            <CardHeader>
-              <CardTitle>Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="pl-2">
-              {/* <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={data}>
-                  <XAxis
-                    dataKey="name"
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => `$${value}`}
-                  />
-                  <Bar dataKey="total" fill="#000000" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer> */}
-            </CardContent>
-          </Card>
-          <Card className="col-span-3">
+        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
+          <WeeklyCalendar
+            bookings={bookings}
+            days={days}
+          />
+          <Card className="col-span-1">
             <CardHeader>
               <CardTitle>Recent Bookings</CardTitle>
               <p className="text-sm text-muted-foreground">
@@ -169,13 +143,6 @@ export default async function Home() {
               <div className="space-y-8">
                 {recentBookings.map((sale, index) => (
                   <div key={index} className="flex items-center">
-                    {/* <Avatar className="h-9 w-9">
-                      <AvatarImage
-                        src={sale.flash.flashImage}
-                        alt={sale.name}
-                      />
-                      <AvatarFallback>{sale.name.charAt(0)}</AvatarFallback>
-                    </Avatar> */}
                     <div className="relative h-9 w-9 rounded-md overflow-hidden">
                       <Image
                         src={sale.flash.flashImage}
