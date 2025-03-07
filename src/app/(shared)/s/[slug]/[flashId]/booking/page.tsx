@@ -55,7 +55,7 @@ export default async function BookingPage({
                         width={150}
                       />
                     </div>
-                    <div className="ml-8">
+                    <div className="ml-0 sm:ml-8">
                       <h1 className="text-xl font-semibold mt-2">
                         Tattoo of {flash.flash?.title}
                       </h1>
@@ -139,7 +139,7 @@ export default async function BookingPage({
                         width={150}
                       />
                     </div>
-                    <div className="ml-8">
+                    <div className="ml-0 sm:ml-8">
                       <h1 className="text-xl font-semibold mt-2">
                         Tattoo of {flash.flash?.title}
                       </h1>

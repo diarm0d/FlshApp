@@ -64,13 +64,13 @@ export default async function FlashPage({
           </div>
           <div className="grid grid-col-1 gap-4">
             <Link href={`${flashId}/booking`}>
-              <Button className="w-full" size="lg">
+              <Button className="w-full " size="lg">
                 Book Appointment
               </Button>
             </Link>
-            <Button className="w-full bg-secondary" size="lg" variant="outline">
+            {/* <Button className="w-full bg-secondary" size="lg" variant="outline">
               Request Similar Design
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
