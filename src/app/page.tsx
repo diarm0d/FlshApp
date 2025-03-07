@@ -10,7 +10,7 @@ import ClaimProfileButton from "../components/signup/ClaimProfileButton";
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#F4F2EE] dark:bg-inherit">
-      <header className="container px-4 lg:px-6 h-14 flex items-center bg-[#F4F2EE] dark:bg-inherit z-10">
+      <header className="container px-4 lg:px-6 h-14 flex items-center">
         <Link className="flex items-center justify-center" href="#">
           <CalendarHeartIcon className="h-6 w-6" />
           <span className="sr-only">Flsh App</span>
@@ -31,7 +31,7 @@ export default function LandingPage() {
         </nav>
       </header>
       <main className="flex-1">
-        <section className="w-full h-screen py-12 md:py-24 lg:py-32 xl:py-48">
+        <section className="w-full h-[90vh] md:h-screen py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
             <div className="grid lg:grid-cols-[1fr_400px] gap-12 xl:grid-cols-[1fr_600px]">
               {/* <div className="bg-neutral-100 dark:bg-neutral-800 mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square" /> */}

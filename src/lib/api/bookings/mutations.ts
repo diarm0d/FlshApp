@@ -87,6 +87,7 @@ export async function createBookingAction(formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const flashId = formData.get("flashId") as string
+  const redirectUrl = formData.get("redirectUrl") as string;
 
   const fromTime = formData.get("fromTime") as string;
   const eventDate = formData.get("eventDate") as string;
@@ -129,5 +130,5 @@ export async function createBookingAction(formData: FormData) {
       notifyParticipants: true,
     },
   });
-  return redirect("/success");
+  return redirect(redirectUrl);
 }
