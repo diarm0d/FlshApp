@@ -17,15 +17,18 @@ export default async function FlashPage({
   return (
     <main>
       <div className="max-w-lg sm:max-w-xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-center">
-          <div className="w-lg sm:mw-xl">
-            <Image
-              alt={flash.title}
-              className="aspect-square object-cover border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
-              height={300}
-              src={flash.flashImage}
-              width={300}
-            />
+        <div className="mb-6">
+          <div className="relative w-full aspect-auto bg-white rounded-lg overflow-hidden flex items-center justify-center">
+            <div className="relative w-full h-[280px] sm:h-[400px] max-h-[70vh]">
+              <Image
+                alt={flash.title}
+                className="object-contain"
+                src={flash.flashImage || "/placeholder.svg"}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 640px, 800px"
+                priority
+              />
+            </div>
           </div>
         </div>
         <div className="space-y-6 mt-4">
