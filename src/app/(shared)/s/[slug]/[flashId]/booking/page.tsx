@@ -43,7 +43,7 @@ export default async function BookingPage({
         <div className="flex items-center justify-center">
           {showForm ? (
             <Card className="max-w-[800px] w-full mx-auto border-0">
-              <CardContent className="p-6 min-h-[450px] grid md:grid-cols-1 gap-4">
+              <CardContent className="min-h-[450px] grid md:grid-cols-1 gap-4">
                 <div>
                   <div className="flex items-center">
                     <div className="w-lg sm:mw-xl hidden sm:block">
@@ -113,11 +113,11 @@ export default async function BookingPage({
                   />
                   <div className="flex flex-col gap-y-2">
                     <Label>Your Name</Label>
-                    <Input name="name" placeholder="Your name" />
+                    <Input name="name" placeholder="Enter your name" />
                   </div>
                   <div className="flex flex-col gap-y-2">
                     <Label>Your Email</Label>
-                    <Input name="email" placeholder="johndoe@example.com" />
+                    <Input name="email" placeholder="Enter your email" />
                   </div>
                   <Button type="submit" className="w-full mt-5">
                     Pay Deposit
@@ -127,7 +127,7 @@ export default async function BookingPage({
             </Card>
           ) : (
             <Card className="max-w-[1000px] w-full mx-auto border-0">
-              <CardContent className="p-10 min-h-[450px] grid grid-cols-1">
+              <CardContent className="min-h-[450px] grid grid-cols-1">
                 <div>
                   <div className="flex items-center">
                     <div className="w-lg sm:mw-xl hidden sm:block">
