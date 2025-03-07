@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
+import ShareButton from "@/components/profiles/ShareButton";
 
 export default async function FlashPage({
   params,
@@ -32,11 +33,14 @@ export default async function FlashPage({
           </div>
         </div>
         <div className="space-y-6 mt-4">
-          <div>
-            <h1 className="text-3xl font-bold">{flash.title}</h1>
-            <p className="text-gray-500 dark:text-gray-400">
-              {flash.description}
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">{flash.title}</h1>
+              <p className="text-gray-500 dark:text-gray-400">
+                {flash.description}
+              </p>
+            </div>
+            <ShareButton />
           </div>
           <div className="space-y-2">
             <h2 className="text-lg font-semibold">Artist Information</h2>
