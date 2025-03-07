@@ -16,14 +16,17 @@ export function WeeklyCalendar({ bookings, days }: WeeklyCalendarProps) {
 
   const getBookingsForDayAndHour = (day: Date, hour: number) => {
     return bookings.filter((booking) => {
-      const start = new Date(booking.startTime).toISOString().split('T')[0];
+      const start = new Date(booking.startTime).toISOString().split("T")[0];
       const bookingHour = booking.startTime.getHours();
-      return isSameDay(start, day) && bookingHour === hour;
+      return (
+        isSameDay(start, day.toISOString().split("T")[0]) &&
+        bookingHour === hour
+      );
     });
   };
 
   return (
-    <Card className="col-span-4">
+    <Card className="col-span-2">
       <CardHeader>
         <CardTitle>Weekly Calendar</CardTitle>
       </CardHeader>
@@ -41,12 +44,12 @@ export function WeeklyCalendar({ bookings, days }: WeeklyCalendarProps) {
         <div className="grid grid-cols-8">
           {hours.map((hour) => (
             <>
-              <div
+              {/* <div
                 key={`hour-${hour}`}
                 className="p-2 text-center border-r text-sm text-muted-foreground"
               >
                 {hour % 12 || 12} {hour >= 12 ? "PM" : "AM"}
-              </div>
+              </div> */}
               {days.map((day, dayIndex) => {
                 const dayBookings = getBookingsForDayAndHour(day, hour);
 
@@ -56,8 +59,8 @@ export function WeeklyCalendar({ bookings, days }: WeeklyCalendarProps) {
                     className="p-1 min-h-[60px] border-b border-r relative"
                   >
                     {dayBookings.map((booking) => {
-                      const start = new Date(booking.startTime);
-                      const end = new Date(booking.endTime);
+                      const start = booking.startTime;
+                      const end = booking.endTime;
                       const duration =
                         (end.getTime() - start.getTime()) / (1000 * 60 * 60);
                       return (
@@ -87,7 +90,7 @@ export function WeeklyCalendar({ bookings, days }: WeeklyCalendarProps) {
             onClick={() => setSelectedBooking(null)}
           >
             <div
-              className="bg-white p-4 rounded-lg max-w-md w-full"
+              className="bg-secondary p-4 rounded-lg max-w-md w-full"
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-lg font-bold mb-2">{selectedBooking.name}</h3>
@@ -117,7 +120,7 @@ export function WeeklyCalendar({ bookings, days }: WeeklyCalendarProps) {
               </p>
               <div className="flex justify-end">
                 <button
-                  className="px-4 py-2 bg-gray-200 rounded-md text-sm font-medium"
+                  className="px-4 py-2 rounded-md text-sm font-medium"
                   onClick={() => setSelectedBooking(null)}
                 >
                   Close
