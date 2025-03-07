@@ -10,9 +10,7 @@ import { getAvailableTimesById } from "@/lib/api/availableTimes/queries";
 import { CalendarWrapper } from "@/components/calendar/CalendarWrapper";
 import Image from "next/image";
 import TimeTable from "@/components/calendar/TimeTable";
-import {
-  createBookingAction
-} from "@/lib/api/bookings/mutations";
+import { createBookingAction } from "@/lib/api/bookings/mutations";
 
 export default async function BookingPage({
   params,
@@ -44,20 +42,20 @@ export default async function BookingPage({
       <div className="max-w-lg sm:max-w-xl mx-auto px-4 py-6">
         <div className="flex items-center justify-center">
           {showForm ? (
-            <Card className="max-w-[800px] w-full mx-auto">
-              <CardContent className="p-6  min-h-[450px] grid md:grid-cols-[1fr,auto,1fr] gap-4">
+            <Card className="max-w-[800px] w-full mx-auto border-0">
+              <CardContent className="p-6 min-h-[450px] grid md:grid-cols-1 gap-4">
                 <div>
                   <div className="flex items-center">
                     <div className="w-lg sm:mw-xl hidden sm:block">
                       <Image
                         alt={flash.flash?.title ?? ""}
-                        className="aspect-square object-cover border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
+                        className="aspect-square object-contain border bg-white border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
                         height={150}
                         src={flash.flash?.flashImage ?? ""}
                         width={150}
                       />
                     </div>
-                    <div className="ml-8">
+                    <div className="ml-0 sm:ml-8">
                       <h1 className="text-xl font-semibold mt-2">
                         Tattoo of {flash.flash?.title}
                       </h1>
@@ -87,7 +85,10 @@ export default async function BookingPage({
                     </div>
                   </div>
                 </div>
-                <Separator orientation="vertical" className="h-full w-[1px]" />
+                <Separator
+                  orientation="horizontal"
+                  className="w-full h-[1px]  my-8"
+                />
                 <form
                   action={createBookingAction}
                   className="flex flex-col gap-y-4"
@@ -119,26 +120,26 @@ export default async function BookingPage({
                     <Input name="email" placeholder="johndoe@example.com" />
                   </div>
                   <Button type="submit" className="w-full mt-5">
-                    Book Appointment
+                    Pay Deposit
                   </Button>
                 </form>
               </CardContent>
             </Card>
           ) : (
-            <Card className="max-w-[1000px] w-full mx-auto">
+            <Card className="max-w-[1000px] w-full mx-auto border-0">
               <CardContent className="p-10 min-h-[450px] grid grid-cols-1">
                 <div>
                   <div className="flex items-center">
                     <div className="w-lg sm:mw-xl hidden sm:block">
                       <Image
                         alt={flash.flash?.title ?? ""}
-                        className="aspect-square object-cover border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
+                        className="aspect-square object-contain bg-white border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
                         height={150}
                         src={flash.flash?.flashImage ?? ""}
                         width={150}
                       />
                     </div>
-                    <div className="ml-8">
+                    <div className="ml-0 sm:ml-8">
                       <h1 className="text-xl font-semibold mt-2">
                         Tattoo of {flash.flash?.title}
                       </h1>
