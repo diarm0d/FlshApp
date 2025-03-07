@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import Loading from "@/app/loading";
 import BookingList from "@/components/bookings/BookingList";
-import { getBookings } from "@/lib/api/bookings/queries";
+import { getBookingsByTwoWeeks } from "@/lib/api/bookings/queries";
 import { getFlashes } from "@/lib/api/flashes/queries";
 import { checkAuth } from "@/lib/auth/utils";
 
@@ -24,7 +24,7 @@ export default async function BookingsPage() {
 const Bookings = async () => {
   await checkAuth();
 
-  const { bookings } = await getBookings();
+  const { bookings } = await getBookingsByTwoWeeks();
   const { flashes } = await getFlashes();
   return (
     <Suspense fallback={<Loading />}>
