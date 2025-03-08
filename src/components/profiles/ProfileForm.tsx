@@ -62,7 +62,7 @@ const ProfileForm = ({
   const [placeId, setPlaceId] = useState(profile?.placeId ?? "");
   const [placeName, setPlaceName] = useState(profile?.placeName ?? "");
   const [selectedCurrency, setSelectedCurrency] = useState(
-    profile?.currency ?? currencies[0].name
+    profile?.currency ?? "Euro"
   );
   const [isDeleting, setIsDeleting] = useState(false);
   const [pending, startMutation] = useTransition();
@@ -172,15 +172,17 @@ const ProfileForm = ({
     }
   };
 
+  console.log(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+
   return (
     <LoadScript
-      googleMapsApiKey={process.env.GOOGLE_MAPS_API_KEY ?? ""}
+      googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
       libraries={libraries}
     >
       <form
         action={handleSubmit}
         onChange={handleChange}
-        className={"space-y-8"}
+        className={"space-y-4"}
       >
         {/* Schema fields start */}
         <div>
@@ -322,39 +324,43 @@ const ProfileForm = ({
             <div className="h-6" />
           )}
         </div>
-        <Label
-          className={cn(
-            "mb-2 inline-block",
-            errors?.depositAmount ? "text-destructive" : ""
+        <div>
+          <Label
+            className={cn(
+              "mb-2 inline-block",
+              errors?.depositAmount ? "text-destructive" : ""
+            )}
+          >
+            Currency
+          </Label>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-full justify-between">
+                {selectedCurrency}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[250px] h-[400px] overflow-scroll">
+              {currencies.map((currency) => (
+                <DropdownMenuItem
+                  key={currency.code}
+                  onSelect={() => {
+                    setSelectedCurrency(currency.name);
+                  }}
+                >
+                  {currency.name} ({currency.code})
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <input type="hidden" name="currency" value={selectedCurrency} />
+          {errors?.currency ? (
+            <p className="text-xs text-destructive mt-2">
+              {errors.currency[0]}
+            </p>
+          ) : (
+            <div className="h-6" />
           )}
-        >
-          Currency
-        </Label>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full justify-between">
-              {selectedCurrency}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[250px]">
-            {currencies.map((currency) => (
-              <DropdownMenuItem
-                key={currency.code}
-                onSelect={() => {
-                  setSelectedCurrency(currency.name);
-                }}
-              >
-                {currency.name} ({currency.code})
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <input type="hidden" name="currency" value={selectedCurrency} />
-        {errors?.currency ? (
-          <p className="text-xs text-destructive mt-2">{errors.currency[0]}</p>
-        ) : (
-          <div className="h-6" />
-        )}
+        </div>
         <div>
           <Label
             className={cn(
