@@ -16,11 +16,12 @@ export default async function BookingPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ flashId: string }>;
+  params: Promise<{ slug: string, flashId: string }>;
   searchParams: Promise<{ date?: string; time?: string }>;
 }) {
-  const { flashId } = await params;
+  const { slug, flashId } = await params;
   const flash = await getFlashById(flashId);
+  const profileUrl = `/s/${slug}`
   if (flash === null) notFound();
   const { availableTimes } = await getAvailableTimesById(
     flash.flash?.userId ?? ""
@@ -95,6 +96,7 @@ export default async function BookingPage({
                 >
                   <input type="hidden" name="fromTime" value={time} />
                   <input type="hidden" name="eventDate" value={date} />
+                  <input type="hidden" name="redirectUrl" value={profileUrl} />
                   <input
                     type="hidden"
                     name="meetingLength"
