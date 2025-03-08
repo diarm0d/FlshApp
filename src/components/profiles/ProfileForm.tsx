@@ -61,6 +61,7 @@ const ProfileForm = ({
   const [slug, setSlug] = useState(profile?.slug ?? "");
   const [placeId, setPlaceId] = useState(profile?.placeId ?? "");
   const [placeName, setPlaceName] = useState(profile?.placeName ?? "");
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState(
     profile?.currency ?? "Euro"
   );
@@ -178,90 +179,94 @@ const ProfileForm = ({
     <LoadScript
       googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
       libraries={libraries}
+      onLoad={() => setMapLoaded(true)}
     >
-      <form
-        action={handleSubmit}
-        onChange={handleChange}
-        className={"space-y-4"}
-      >
-        {/* Schema fields start */}
-        <div>
-          <Label
-            className={cn(
-              "mb-2 inline-block",
-              errors?.name ? "text-destructive" : ""
-            )}
-          >
-            Username
-          </Label>
-          <Input
-            type="text"
-            name="name"
-            className={cn(errors?.name ? "ring ring-destructive" : "")}
-            value={userName}
-            onChange={(e) => handleUserNameChange(e)}
-          />
-          {errors?.name ? (
-            <p className="text-xs text-destructive mt-2">{errors.name[0]}</p>
-          ) : (
-            <div className="h-6" />
-          )}
-        </div>
-        <div>
-          <Label
-            className={cn(
-              "mb-2 inline-block",
-              errors?.slug ? "text-destructive" : ""
-            )}
-          >
-            Slug
-          </Label>
-          <div className="flex rounder-md">
-            <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-muted bg-muted text-sm text-muted-foreground">
-              flsh.app/s/
-            </span>
+      {mapLoaded && (
+        <form
+          action={handleSubmit}
+          onChange={handleChange}
+          className={"space-y-4"}
+        >
+          {/* Schema fields start */}
+          <div>
+            <Label
+              className={cn(
+                "mb-2 inline-block",
+                errors?.name ? "text-destructive" : ""
+              )}
+            >
+              Username
+            </Label>
             <Input
               type="text"
-              name="slug"
-              className={cn(
-                errors?.slug
-                  ? "ring ring-destructive rounded-l-none"
-                  : "rounded-l-none"
-              )}
-              readOnly
-              value={slug}
+              name="name"
+              placeholder="Enter your name"
+              className={cn(errors?.name ? "ring ring-destructive" : "")}
+              value={userName}
+              onChange={(e) => handleUserNameChange(e)}
             />
-          </div>
-          {errors?.slug ? (
-            <p className="text-xs text-destructive mt-2">{errors.slug[0]}</p>
-          ) : (
-            <div className="h-6" />
-          )}
-        </div>
-        <div>
-          <Label
-            className={cn(
-              "mb-2 inline-block",
-              errors?.description ? "text-destructive" : ""
+            {errors?.name ? (
+              <p className="text-xs text-destructive mt-2">{errors.name[0]}</p>
+            ) : (
+              <div className="h-6" />
             )}
-          >
-            Description
-          </Label>
-          <Input
-            type="text"
-            name="description"
-            className={cn(errors?.description ? "ring ring-destructive" : "")}
-            defaultValue={profile?.description ?? ""}
-          />
-          {errors?.description ? (
-            <p className="text-xs text-destructive mt-2">
-              {errors.description[0]}
-            </p>
-          ) : (
-            <div className="h-6" />
-          )}
-        </div>
-        {/* <div>
+          </div>
+          <div>
+            <Label
+              className={cn(
+                "mb-2 inline-block",
+                errors?.slug ? "text-destructive" : ""
+              )}
+            >
+              Slug
+            </Label>
+            <div className="flex rounder-md">
+              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-muted bg-muted text-sm text-muted-foreground">
+                flsh.app/s/
+              </span>
+              <Input
+                type="text"
+                name="slug"
+                className={cn(
+                  errors?.slug
+                    ? "ring ring-destructive rounded-l-none"
+                    : "rounded-l-none"
+                )}
+                readOnly
+                value={slug}
+              />
+            </div>
+            {errors?.slug ? (
+              <p className="text-xs text-destructive mt-2">{errors.slug[0]}</p>
+            ) : (
+              <div className="h-6" />
+            )}
+          </div>
+          <div>
+            <Label
+              className={cn(
+                "mb-2 inline-block",
+                errors?.description ? "text-destructive" : ""
+              )}
+            >
+              Profile Bio
+            </Label>
+            <Input
+              type="text"
+              name="description"
+              placeholder="Enter your bio"
+              className={cn(errors?.description ? "ring ring-destructive" : "")}
+              defaultValue={profile?.description ?? ""}
+            />
+            {errors?.description ? (
+              <p className="text-xs text-destructive mt-2">
+                {errors.description[0]}
+              </p>
+            ) : (
+              <div className="h-6" />
+            )}
+          </div>
+          {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -282,7 +287,7 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div> */}
-        {/* <div>
+          {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -299,162 +304,169 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div> */}
-        <div>
-          <Label
-            className={cn(
-              "mb-2 inline-block",
-              errors?.sessionDuration ? "text-destructive" : ""
-            )}
-          >
-            Session Duration
-          </Label>
-          <Input
-            type="text"
-            name="sessionDuration"
-            className={cn(
-              errors?.sessionDuration ? "ring ring-destructive" : ""
-            )}
-            defaultValue={profile?.sessionDuration ?? ""}
-          />
-          {errors?.sessionDuration ? (
-            <p className="text-xs text-destructive mt-2">
-              {errors.sessionDuration[0]}
-            </p>
-          ) : (
-            <div className="h-6" />
-          )}
-        </div>
-        <div>
-          <Label
-            className={cn(
-              "mb-2 inline-block",
-              errors?.depositAmount ? "text-destructive" : ""
-            )}
-          >
-            Currency
-          </Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {selectedCurrency}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[250px] h-[400px] overflow-scroll">
-              {currencies.map((currency) => (
-                <DropdownMenuItem
-                  key={currency.code}
-                  onSelect={() => {
-                    setSelectedCurrency(currency.name);
-                  }}
-                >
-                  {currency.name} ({currency.code})
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <input type="hidden" name="currency" value={selectedCurrency} />
-          {errors?.currency ? (
-            <p className="text-xs text-destructive mt-2">
-              {errors.currency[0]}
-            </p>
-          ) : (
-            <div className="h-6" />
-          )}
-        </div>
-        <div>
-          <Label
-            className={cn(
-              "mb-2 inline-block",
-              errors?.depositAmount ? "text-destructive" : ""
-            )}
-          >
-            Deposit Amount
-          </Label>
-          <Input
-            type="text"
-            name="depositAmount"
-            className={cn(errors?.depositAmount ? "ring ring-destructive" : "")}
-            defaultValue={profile?.depositAmount ?? ""}
-          />
-          {errors?.depositAmount ? (
-            <p className="text-xs text-destructive mt-2">
-              {errors.depositAmount[0]}
-            </p>
-          ) : (
-            <div className="h-6" />
-          )}
-        </div>
-        <div>
-          <Label
-            className={cn(
-              "mb-2 inline-block",
-              errors?.slug ? "text-destructive" : ""
-            )}
-          >
-            Business Name / Location
-          </Label>
-          <Autocomplete
-            className="w-full"
-            onLoad={(auto) => setAutocomplete(auto)}
-            onPlaceChanged={() => {
-              if (autocomplete) {
-                const place = autocomplete.getPlace();
-                if (place.place_id && place.formatted_address) {
-                  setPlaceId(place.place_id);
-                  setPlaceName(place.formatted_address);
-                }
-              }
-            }}
-          >
+          <div>
+            <Label
+              className={cn(
+                "mb-2 inline-block",
+                errors?.sessionDuration ? "text-destructive" : ""
+              )}
+            >
+              Session Duration (in minutes)
+            </Label>
             <Input
-              className="w-full"
-              ref={inputRef}
               type="text"
-              placeholder="Search for a place"
+              name="sessionDuration"
+              placeholder="Enter session duration"
+              className={cn(
+                errors?.sessionDuration ? "ring ring-destructive" : ""
+              )}
+              defaultValue={profile?.sessionDuration ?? ""}
             />
-          </Autocomplete>
-        </div>
-        <input type="hidden" name="placeId" value={placeId} />
-        <input type="hidden" name="placeName" value={placeName} />
-        {errors?.placeId ? (
-          <p className="text-xs text-destructive mt-2">{errors.placeId[0]}</p>
-        ) : errors?.placeName ? (
-          <p className="text-xs text-destructive mt-2">{errors.placeName[0]}</p>
-        ) : (
-          <div className="h-6" />
-        )}
-        {/* Schema fields end */}
+            {errors?.sessionDuration ? (
+              <p className="text-xs text-destructive mt-2">
+                {errors.sessionDuration[0]}
+              </p>
+            ) : (
+              <div className="h-6" />
+            )}
+          </div>
+          <div>
+            <Label
+              className={cn(
+                "mb-2 inline-block",
+                errors?.depositAmount ? "text-destructive" : ""
+              )}
+            >
+              Currency
+            </Label>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  {selectedCurrency}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[250px] h-[400px] overflow-scroll">
+                {currencies.map((currency) => (
+                  <DropdownMenuItem
+                    key={currency.code}
+                    onSelect={() => {
+                      setSelectedCurrency(currency.name);
+                    }}
+                  >
+                    {currency.name} ({currency.code})
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <input type="hidden" name="currency" value={selectedCurrency} />
+            {errors?.currency ? (
+              <p className="text-xs text-destructive mt-2">
+                {errors.currency[0]}
+              </p>
+            ) : (
+              <div className="h-6" />
+            )}
+          </div>
+          <div>
+            <Label
+              className={cn(
+                "mb-2 inline-block",
+                errors?.depositAmount ? "text-destructive" : ""
+              )}
+            >
+              Deposit Amount
+            </Label>
+            <Input
+              type="text"
+              name="depositAmount"
+              placeholder="Enter deposit amount"
+              className={cn(
+                errors?.depositAmount ? "ring ring-destructive" : ""
+              )}
+              defaultValue={profile?.depositAmount ?? ""}
+            />
+            {errors?.depositAmount ? (
+              <p className="text-xs text-destructive mt-2">
+                {errors.depositAmount[0]}
+              </p>
+            ) : (
+              <div className="h-6" />
+            )}
+          </div>
+          <div>
+            <Label
+              className={cn(
+                "mb-2 inline-block",
+                errors?.slug ? "text-destructive" : ""
+              )}
+            >
+              Business Name / Location
+            </Label>
+            <Autocomplete
+              className="w-full"
+              onLoad={(auto) => setAutocomplete(auto)}
+              onPlaceChanged={() => {
+                if (autocomplete) {
+                  const place = autocomplete.getPlace();
+                  if (place.place_id && place.formatted_address) {
+                    setPlaceId(place.place_id);
+                    setPlaceName(place.formatted_address);
+                  }
+                }
+              }}
+            >
+              <Input
+                className="w-full"
+                ref={inputRef}
+                type="text"
+                placeholder="Search for a place"
+              />
+            </Autocomplete>
+          </div>
+          <input type="hidden" name="placeId" value={placeId} />
+          <input type="hidden" name="placeName" value={placeName} />
+          {errors?.placeId ? (
+            <p className="text-xs text-destructive mt-2">{errors.placeId[0]}</p>
+          ) : errors?.placeName ? (
+            <p className="text-xs text-destructive mt-2">
+              {errors.placeName[0]}
+            </p>
+          ) : (
+            <div className="h-6" />
+          )}
+          {/* Schema fields end */}
 
-        {/* Save Button */}
-        <SaveButton errors={hasErrors} editing={editing} />
+          {/* Save Button */}
+          <SaveButton errors={hasErrors} editing={editing} />
 
-        {/* Delete Button */}
-        {editing ? (
-          <Button
-            type="button"
-            disabled={isDeleting || pending || hasErrors}
-            variant={"destructive"}
-            onClick={() => {
-              setIsDeleting(true);
-              closeModal && closeModal();
-              startMutation(async () => {
-                addOptimistic &&
-                  addOptimistic({ action: "delete", data: profile });
-                const error = await deleteProfileAction(profile.id);
-                setIsDeleting(false);
-                const errorFormatted = {
-                  error: error ?? "Error",
-                  values: profile,
-                };
+          {/* Delete Button */}
+          {editing ? (
+            <Button
+              type="button"
+              disabled={isDeleting || pending || hasErrors}
+              variant={"destructive"}
+              onClick={() => {
+                setIsDeleting(true);
+                closeModal && closeModal();
+                startMutation(async () => {
+                  addOptimistic &&
+                    addOptimistic({ action: "delete", data: profile });
+                  const error = await deleteProfileAction(profile.id);
+                  setIsDeleting(false);
+                  const errorFormatted = {
+                    error: error ?? "Error",
+                    values: profile,
+                  };
 
-                onSuccess("delete", error ? errorFormatted : undefined);
-              });
-            }}
-          >
-            Delet{isDeleting ? "ing..." : "e"}
-          </Button>
-        ) : null}
-      </form>
+                  onSuccess("delete", error ? errorFormatted : undefined);
+                });
+              }}
+            >
+              Delet{isDeleting ? "ing..." : "e"}
+            </Button>
+          ) : null}
+        </form>
+      )}
     </LoadScript>
   );
 };
