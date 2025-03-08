@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -13,6 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useBackPath } from "@/components/shared/BackButton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { type Profile, insertProfileParams } from "@/lib/db/schema/profiles";
 import {
@@ -21,6 +27,15 @@ import {
   updateProfileAction,
   createProfileOnboardingAction,
 } from "@/lib/actions/profiles";
+
+import { LoadScript, Autocomplete } from "@react-google-maps/api";
+import currencyCodes from "currency-codes";
+
+const libraries: "places"[] = ["places"];
+const currencies = currencyCodes.data.map((c) => ({
+  code: c.code,
+  name: c.currency,
+}));
 
 const ProfileForm = ({
   profile,
@@ -44,8 +59,28 @@ const ProfileForm = ({
 
   const [userName, setUserName] = useState(profile?.name ?? "");
   const [slug, setSlug] = useState(profile?.slug ?? "");
+  const [placeId, setPlaceId] = useState(profile?.placeId ?? "");
+  const [placeName, setPlaceName] = useState(profile?.placeName ?? "");
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    profile?.currency ?? currencies[0].name
+  );
   const [isDeleting, setIsDeleting] = useState(false);
   const [pending, startMutation] = useTransition();
+  const [autocomplete, setAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (autocomplete) {
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (place.place_id && place.formatted_address) {
+          setPlaceId(place.place_id);
+          setPlaceName(place.formatted_address);
+        }
+      });
+    }
+  }, [autocomplete, placeId, placeName]);
 
   const router = useRouter();
   const backpath = useBackPath("profiles");
@@ -117,9 +152,9 @@ const ProfileForm = ({
           ? await createProfileOnboardingAction(values)
           : await createProfileAction(values);
 
-            if (onboarding && !error) {
-              router.push("/onboarding/calendar");
-            }
+        if (onboarding && !error) {
+          router.push("/onboarding/calendar");
+        }
 
         const errorFormatted = {
           error: error ?? "Error",
@@ -138,85 +173,93 @@ const ProfileForm = ({
   };
 
   return (
-    <form action={handleSubmit} onChange={handleChange} className={"space-y-8"}>
-      {/* Schema fields start */}
-      <div>
-        <Label
-          className={cn(
-            "mb-2 inline-block",
-            errors?.name ? "text-destructive" : ""
-          )}
-        >
-          Username
-        </Label>
-        <Input
-          type="text"
-          name="name"
-          className={cn(errors?.name ? "ring ring-destructive" : "")}
-          value={userName}
-          onChange={(e) => handleUserNameChange(e)}
-        />
-        {errors?.name ? (
-          <p className="text-xs text-destructive mt-2">{errors.name[0]}</p>
-        ) : (
-          <div className="h-6" />
-        )}
-      </div>
-      <div>
-        <Label
-          className={cn(
-            "mb-2 inline-block",
-            errors?.slug ? "text-destructive" : ""
-          )}
-        >
-          Slug
-        </Label>
-        <div className="flex rounder-md">
-          <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-muted bg-muted text-sm text-muted-foreground">
-            flsh.app/s/
-          </span>
+    <LoadScript
+      googleMapsApiKey={process.env.GOOGLE_MAPS_API_KEY ?? ""}
+      libraries={libraries}
+    >
+      <form
+        action={handleSubmit}
+        onChange={handleChange}
+        className={"space-y-8"}
+      >
+        {/* Schema fields start */}
+        <div>
+          <Label
+            className={cn(
+              "mb-2 inline-block",
+              errors?.name ? "text-destructive" : ""
+            )}
+          >
+            Username
+          </Label>
           <Input
             type="text"
-            name="slug"
-            className={cn(
-              errors?.slug
-                ? "ring ring-destructive rounded-l-none"
-                : "rounded-l-none"
-            )}
-            readOnly
-            value={slug}
+            name="name"
+            className={cn(errors?.name ? "ring ring-destructive" : "")}
+            value={userName}
+            onChange={(e) => handleUserNameChange(e)}
           />
-        </div>
-        {errors?.slug ? (
-          <p className="text-xs text-destructive mt-2">{errors.slug[0]}</p>
-        ) : (
-          <div className="h-6" />
-        )}
-      </div>
-      <div>
-        <Label
-          className={cn(
-            "mb-2 inline-block",
-            errors?.description ? "text-destructive" : ""
+          {errors?.name ? (
+            <p className="text-xs text-destructive mt-2">{errors.name[0]}</p>
+          ) : (
+            <div className="h-6" />
           )}
-        >
-          Description
-        </Label>
-        <Input
-          type="text"
-          name="description"
-          className={cn(errors?.description ? "ring ring-destructive" : "")}
-          defaultValue={profile?.description ?? ""}
-        />
-        {errors?.description ? (
-          <p className="text-xs text-destructive mt-2">
-            {errors.description[0]}
-          </p>
-        ) : (
-          <div className="h-6" />
-        )}
-      </div>
-      {/* <div>
+        </div>
+        <div>
+          <Label
+            className={cn(
+              "mb-2 inline-block",
+              errors?.slug ? "text-destructive" : ""
+            )}
+          >
+            Slug
+          </Label>
+          <div className="flex rounder-md">
+            <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-muted bg-muted text-sm text-muted-foreground">
+              flsh.app/s/
+            </span>
+            <Input
+              type="text"
+              name="slug"
+              className={cn(
+                errors?.slug
+                  ? "ring ring-destructive rounded-l-none"
+                  : "rounded-l-none"
+              )}
+              readOnly
+              value={slug}
+            />
+          </div>
+          {errors?.slug ? (
+            <p className="text-xs text-destructive mt-2">{errors.slug[0]}</p>
+          ) : (
+            <div className="h-6" />
+          )}
+        </div>
+        <div>
+          <Label
+            className={cn(
+              "mb-2 inline-block",
+              errors?.description ? "text-destructive" : ""
+            )}
+          >
+            Description
+          </Label>
+          <Input
+            type="text"
+            name="description"
+            className={cn(errors?.description ? "ring ring-destructive" : "")}
+            defaultValue={profile?.description ?? ""}
+          />
+          {errors?.description ? (
+            <p className="text-xs text-destructive mt-2">
+              {errors.description[0]}
+            </p>
+          ) : (
+            <div className="h-6" />
+          )}
+        </div>
+        {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -237,7 +280,7 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div> */}
-      {/* <div>
+        {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -254,84 +297,147 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div> */}
-      <div>
-        <Label
-          className={cn(
-            "mb-2 inline-block",
-            errors?.sessionDuration ? "text-destructive" : ""
+        <div>
+          <Label
+            className={cn(
+              "mb-2 inline-block",
+              errors?.sessionDuration ? "text-destructive" : ""
+            )}
+          >
+            Session Duration
+          </Label>
+          <Input
+            type="text"
+            name="sessionDuration"
+            className={cn(
+              errors?.sessionDuration ? "ring ring-destructive" : ""
+            )}
+            defaultValue={profile?.sessionDuration ?? ""}
+          />
+          {errors?.sessionDuration ? (
+            <p className="text-xs text-destructive mt-2">
+              {errors.sessionDuration[0]}
+            </p>
+          ) : (
+            <div className="h-6" />
           )}
-        >
-          Session Duration
-        </Label>
-        <Input
-          type="text"
-          name="sessionDuration"
-          className={cn(errors?.sessionDuration ? "ring ring-destructive" : "")}
-          defaultValue={profile?.sessionDuration ?? ""}
-        />
-        {errors?.sessionDuration ? (
-          <p className="text-xs text-destructive mt-2">
-            {errors.sessionDuration[0]}
-          </p>
-        ) : (
-          <div className="h-6" />
-        )}
-      </div>
-      <div>
+        </div>
         <Label
           className={cn(
             "mb-2 inline-block",
             errors?.depositAmount ? "text-destructive" : ""
           )}
         >
-          Deposit Amount
+          Currency
         </Label>
-        <Input
-          type="text"
-          name="depositAmount"
-          className={cn(errors?.depositAmount ? "ring ring-destructive" : "")}
-          defaultValue={profile?.depositAmount ?? ""}
-        />
-        {errors?.depositAmount ? (
-          <p className="text-xs text-destructive mt-2">
-            {errors.depositAmount[0]}
-          </p>
-        ) : (
-          <div className="h-6" />
-        )}
-      </div>
-      {/* Schema fields end */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full justify-between">
+              {selectedCurrency}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[250px]">
+            {currencies.map((currency) => (
+              <DropdownMenuItem
+                key={currency.code}
+                onSelect={() => {
+                  setSelectedCurrency(currency.name);
+                }}
+              >
+                {currency.name} ({currency.code})
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <input type="hidden" name="currency" value={selectedCurrency} />
+        <div>
+          <Label
+            className={cn(
+              "mb-2 inline-block",
+              errors?.depositAmount ? "text-destructive" : ""
+            )}
+          >
+            Deposit Amount
+          </Label>
+          <Input
+            type="text"
+            name="depositAmount"
+            className={cn(errors?.depositAmount ? "ring ring-destructive" : "")}
+            defaultValue={profile?.depositAmount ?? ""}
+          />
+          {errors?.depositAmount ? (
+            <p className="text-xs text-destructive mt-2">
+              {errors.depositAmount[0]}
+            </p>
+          ) : (
+            <div className="h-6" />
+          )}
+        </div>
+        <div>
+          <Label
+            className={cn(
+              "mb-2 inline-block",
+              errors?.slug ? "text-destructive" : ""
+            )}
+          >
+            Business Name / Location
+          </Label>
+          <Autocomplete
+            className="w-full"
+            onLoad={(auto) => setAutocomplete(auto)}
+            onPlaceChanged={() => {
+              if (autocomplete) {
+                const place = autocomplete.getPlace();
+                if (place.place_id && place.formatted_address) {
+                  setPlaceId(place.place_id);
+                  setPlaceName(place.formatted_address);
+                }
+              }
+            }}
+          >
+            <Input
+              className="w-full"
+              ref={inputRef}
+              type="text"
+              placeholder="Search for a place"
+            />
+          </Autocomplete>
+        </div>
+        <input type="hidden" name="placeId" value={placeId} />
+        <input type="hidden" name="placeName" value={placeName} />
+        {/* Schema fields end */}
 
-      {/* Save Button */}
-      <SaveButton errors={hasErrors} editing={editing} />
+        {/* Save Button */}
+        <SaveButton errors={hasErrors} editing={editing} />
 
-      {/* Delete Button */}
-      {editing ? (
-        <Button
-          type="button"
-          disabled={isDeleting || pending || hasErrors}
-          variant={"destructive"}
-          onClick={() => {
-            setIsDeleting(true);
-            closeModal && closeModal();
-            startMutation(async () => {
-              addOptimistic &&
-                addOptimistic({ action: "delete", data: profile });
-              const error = await deleteProfileAction(profile.id);
-              setIsDeleting(false);
-              const errorFormatted = {
-                error: error ?? "Error",
-                values: profile,
-              };
+        {/* Delete Button */}
+        {editing ? (
+          <Button
+            type="button"
+            disabled={isDeleting || pending || hasErrors}
+            variant={"destructive"}
+            onClick={() => {
+              setIsDeleting(true);
+              closeModal && closeModal();
+              startMutation(async () => {
+                addOptimistic &&
+                  addOptimistic({ action: "delete", data: profile });
+                const error = await deleteProfileAction(profile.id);
+                setIsDeleting(false);
+                const errorFormatted = {
+                  error: error ?? "Error",
+                  values: profile,
+                };
 
-              onSuccess("delete", error ? errorFormatted : undefined);
-            });
-          }}
-        >
-          Delet{isDeleting ? "ing..." : "e"}
-        </Button>
-      ) : null}
-    </form>
+                onSuccess("delete", error ? errorFormatted : undefined);
+              });
+            }}
+          >
+            Delet{isDeleting ? "ing..." : "e"}
+          </Button>
+        ) : null}
+      </form>
+    </LoadScript>
   );
 };
 

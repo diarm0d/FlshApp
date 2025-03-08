@@ -82,7 +82,10 @@ model Profile {
   description     String
   public          Boolean
   sessionDuration Int
+  currency        String   @default("Euro")
   depositAmount   Int
+  placeId         String   @default("Test")
+  placeName       String   @default("Test")
   userId          String
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())
