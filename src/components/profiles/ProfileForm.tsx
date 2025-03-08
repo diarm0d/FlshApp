@@ -350,6 +350,11 @@ const ProfileForm = ({
           </DropdownMenuContent>
         </DropdownMenu>
         <input type="hidden" name="currency" value={selectedCurrency} />
+        {errors?.currency ? (
+          <p className="text-xs text-destructive mt-2">{errors.currency[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
         <div>
           <Label
             className={cn(
@@ -405,6 +410,13 @@ const ProfileForm = ({
         </div>
         <input type="hidden" name="placeId" value={placeId} />
         <input type="hidden" name="placeName" value={placeName} />
+        {errors?.placeId ? (
+          <p className="text-xs text-destructive mt-2">{errors.placeId[0]}</p>
+        ) : errors?.placeName ? (
+          <p className="text-xs text-destructive mt-2">{errors.placeName[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
         {/* Schema fields end */}
 
         {/* Save Button */}
