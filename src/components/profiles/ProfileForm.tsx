@@ -28,14 +28,25 @@ import {
   createProfileOnboardingAction,
 } from "@/lib/actions/profiles";
 
-import { LoadScript, Autocomplete } from "@react-google-maps/api";
 import currencyCodes from "currency-codes";
 
-const libraries: "places"[] = ["places"];
-const currencies = currencyCodes.data.map((c) => ({
-  code: c.code,
-  name: c.currency,
-}));
+const frequentCurrencies = ["EUR", "GBP", "CHF", "DKK", "USD"];
+const currencies = currencyCodes.data
+  .map((c) => ({
+    code: c.code,
+    name: c.currency,
+  }))
+  .sort((a, b) => {
+    // Prioritize the frequent currencies
+    const aIsFrequent = frequentCurrencies.includes(a.code);
+    const bIsFrequent = frequentCurrencies.includes(b.code);
+
+    if (aIsFrequent && !bIsFrequent) return -1;
+    if (!aIsFrequent && bIsFrequent) return 1;
+
+    // Otherwise, sort alphabetically
+    return a.name.localeCompare(b.name);
+  });
 
 const ProfileForm = ({
   profile,
@@ -61,27 +72,15 @@ const ProfileForm = ({
   const [slug, setSlug] = useState(profile?.slug ?? "");
   const [placeId, setPlaceId] = useState(profile?.placeId ?? "");
   const [placeName, setPlaceName] = useState(profile?.placeName ?? "");
-  const [mapLoaded, setMapLoaded] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState(
     profile?.currency ?? "Euro"
   );
   const [isDeleting, setIsDeleting] = useState(false);
-  const [pending, startMutation] = useTransition();
-  const [autocomplete, setAutocomplete] =
-    useState<google.maps.places.Autocomplete | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [predictions, setPredictions] = useState<
+    { id: string; name: string }[]
+  >([]);
 
-  useEffect(() => {
-    if (autocomplete) {
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        if (place.place_id && place.formatted_address) {
-          setPlaceId(place.place_id);
-          setPlaceName(place.formatted_address);
-        }
-      });
-    }
-  }, [autocomplete, placeId, placeName]);
+  const [pending, startMutation] = useTransition();
 
   const router = useRouter();
   const backpath = useBackPath("profiles");
@@ -173,15 +172,71 @@ const ProfileForm = ({
     }
   };
 
-  console.log(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+  const fetchPredictions = async (input: string) => {
+    if (!input) return [];
 
+    const requestOptions: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        "X-Goog-FieldMask": "places.id,places.displayName",
+      },
+      body: JSON.stringify({
+        input,
+        languageCode: "en",
+      }),
+    };
+
+    try {
+      const response = await fetch(
+        "https://places.googleapis.com/v1/places:autocomplete",
+        requestOptions
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Error: ${errorData.error.message} (Code: ${errorData.error.code})`
+        );
+      }
+
+      const data = await response.json();
+      return data.places || [];
+    } catch (error) {
+      console.error("Failed to fetch autocomplete predictions:", error);
+      return [];
+    }
+  };
+
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    setPlaceName(input);
+
+    if (input.length < 3) {
+      setPredictions([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/autocomplete?input=${encodeURIComponent(input)}`
+      );
+      const data = await response.json();
+
+      if (data?.predictions) {
+        setPredictions(data.predictions);
+      } else {
+        setPredictions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching autocomplete data:", error);
+      setPredictions([]);
+    }
+  };
+
+ 
   return (
-    <LoadScript
-      googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
-      libraries={libraries}
-      onLoad={() => setMapLoaded(true)}
-    >
-      {mapLoaded && (
         <form
           action={handleSubmit}
           onChange={handleChange}
@@ -402,26 +457,30 @@ const ProfileForm = ({
             >
               Business Name / Location
             </Label>
-            <Autocomplete
-              className="w-full"
-              onLoad={(auto) => setAutocomplete(auto)}
-              onPlaceChanged={() => {
-                if (autocomplete) {
-                  const place = autocomplete.getPlace();
-                  if (place.place_id && place.formatted_address) {
-                    setPlaceId(place.place_id);
-                    setPlaceName(place.formatted_address);
-                  }
-                }
-              }}
-            >
-              <Input
-                className="w-full"
-                ref={inputRef}
-                type="text"
-                placeholder="Search for a place"
-              />
-            </Autocomplete>
+            <Input
+              type="text"
+              value={placeName}
+              onChange={handleInputChange}
+              placeholder="Enter a location"
+            />
+
+            {predictions.length > 0 && (
+              <ul className="border rounded bg-white shadow-md absolute">
+                {predictions.map((prediction) => (
+                  <li
+                    key={prediction.id}
+                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => {
+                      setPlaceId(prediction.id);
+                      setPlaceName(prediction.name);
+                      setPredictions([]);
+                    }}
+                  >
+                    {prediction.name}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <input type="hidden" name="placeId" value={placeId} />
           <input type="hidden" name="placeName" value={placeName} />
@@ -466,8 +525,6 @@ const ProfileForm = ({
             </Button>
           ) : null}
         </form>
-      )}
-    </LoadScript>
   );
 };
 
