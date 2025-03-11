@@ -10,8 +10,8 @@ import {
 // PayPal Client Configuration
 const client = new Client({
   clientCredentialsAuthCredentials: {
-    oAuthClientId: process.env.PAYPAL_CLIENT_ID!,
-    oAuthClientSecret: process.env.PAYPAL_SECRET!,
+    oAuthClientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+    oAuthClientSecret: process.env.PAYPAL_CLIENT_SECRET!,
   },
   timeout: 0,
   environment: Environment.Sandbox,

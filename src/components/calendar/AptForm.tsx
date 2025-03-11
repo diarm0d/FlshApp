@@ -51,14 +51,24 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
           {!isPaid ? (
             <PayPalButtons
               createOrder={async () => {
-                // Create PayPal order
                 const res = await fetch("/api/paypal/create-order", {
                   method: "POST",
-                  body: JSON.stringify({ amount: 0.01 }), // Change amount dynamically
+                  body: JSON.stringify({ amount: 0.01 }),
                   headers: { "Content-Type": "application/json" },
                 });
-                const data = await res.json();
-                return data.orderID;
+
+                console.log('this is the res" ', res)
+
+                const text = await res.text(); // Read response as text to debug
+                console.log("PayPal API response:", text);
+
+                try {
+                  const data = JSON.parse(text);
+                  return data.orderID;
+                } catch (err) {
+                  console.error("Failed to parse JSON:", err);
+                  throw new Error("Invalid response from PayPal API");
+                }
               }}
               onApprove={async (data) => {
                 setIsPaid(true);
