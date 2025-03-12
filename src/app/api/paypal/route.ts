@@ -10,10 +10,10 @@ import {
 // PayPal Client Configuration
 const client = new Client({
   clientCredentialsAuthCredentials: {
-    oAuthClientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+    oAuthClientId: process.env.PAYPAL_CLIENT_ID!,
     oAuthClientSecret: process.env.PAYPAL_CLIENT_SECRET!,
   },
-  timeout: 0,
+  timeout: 300,
   environment: Environment.Sandbox,
   logging: {
     logLevel: LogLevel.Info,
@@ -28,32 +28,29 @@ const client = new Client({
 
 const ordersController = new OrdersController(client);
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     const { amount } = req.body;
 
     try {
       const collect = {
-        body: {
-          intent: CheckoutPaymentIntent.Capture,
-          purchaseUnits: [
-            {
-              amount: {
-                currencyCode: "EUR",
-                value: amount,
-              },
+        intent: CheckoutPaymentIntent.Capture,
+        purchaseUnits: [
+          {
+            amount: {
+              currencyCode: "EUR", // Use 'currencyCode' instead of 'currency_code'
+              value: amount.toString(),
             },
-          ],
-        },
-        prefer: "return=minimal",
+          },
+        ],
       };
 
-      const { result } = await ordersController.ordersCreate(collect);
+      const { result } = await ordersController.ordersCreate({ body: collect });
+
+      console.log("PayPal Order Created:", result);
       res.json({ orderID: result.id });
     } catch (error: any) {
+      console.error("PayPal API Error:", error);
       res.status(500).json({ error: error.message });
     }
   } else {

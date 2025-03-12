@@ -51,7 +51,7 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
           {!isPaid ? (
             <PayPalButtons
               createOrder={async () => {
-                const res = await fetch("/api/paypal/create-order", {
+                const res = await fetch("/api/paypal", {
                   method: "POST",
                   body: JSON.stringify({ amount: 0.01 }),
                   headers: { "Content-Type": "application/json" },
@@ -60,10 +60,23 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
                 console.log('this is the res" ', res)
 
                 const text = await res.text(); // Read response as text to debug
-                console.log("PayPal API response:", text);
+                const data = JSON.parse(text);
+                console.log("PayPal API response:", data);
 
                 try {
+                  // Ensure response is JSON
+                  if (!res.ok) {
+                    throw new Error(
+                      `PayPal API error: ${res.status} - ${await res.text()}`
+                    );
+                  }
+
                   const data = JSON.parse(text);
+
+                  if (!data.orderID) {
+                    throw new Error("PayPal API response missing orderID");
+                  }
+
                   return data.orderID;
                 } catch (err) {
                   console.error("Failed to parse JSON:", err);
