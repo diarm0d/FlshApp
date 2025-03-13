@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import {
   Client,
   Environment,
@@ -10,10 +10,10 @@ import {
 // PayPal Client Configuration
 const client = new Client({
   clientCredentialsAuthCredentials: {
-    oAuthClientId: process.env.PAYPAL_CLIENT_ID!,
+    oAuthClientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
     oAuthClientSecret: process.env.PAYPAL_CLIENT_SECRET!,
   },
-  timeout: 300,
+  timeout: 0,
   environment: Environment.Sandbox,
   logging: {
     logLevel: LogLevel.Info,
@@ -28,33 +28,28 @@ const client = new Client({
 
 const ordersController = new OrdersController(client);
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "POST") {
-    const { amount } = req.body;
+export async function POST(req: Request) {
+  try {
+    const { amount } = await req.json();
 
-    try {
-      const collect = {
-        intent: CheckoutPaymentIntent.Capture,
-        purchaseUnits: [
-          {
-            amount: {
-              currencyCode: "EUR", // Use 'currencyCode' instead of 'currency_code'
-              value: amount.toString(),
-            },
+    const collect = {
+      intent: CheckoutPaymentIntent.Capture,
+      purchaseUnits: [
+        {
+          amount: {
+            currencyCode: "EUR",
+            value: amount.toString(),
           },
-        ],
-      };
+        },
+      ],
+    };
 
-      const { result } = await ordersController.ordersCreate({ body: collect });
+    const { result } = await ordersController.ordersCreate({ body: collect });
 
-      console.log("PayPal Order Created:", result);
-      res.json({ orderID: result.id });
-    } catch (error: any) {
-      console.error("PayPal API Error:", error);
-      res.status(500).json({ error: error.message });
-    }
-  } else {
-    res.setHeader("Allow", ["POST"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    console.log("PayPal Order Created:", result);
+    return NextResponse.json({ orderID: result.id });
+  } catch (error: any) {
+    console.error("PayPal API Error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
