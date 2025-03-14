@@ -68,6 +68,7 @@ export const deleteBooking = async (id: BookingId) => {
 };
 
 export async function createBookingAction(formData: FormData) {
+  console.log(formData);
   const userData = await db.user.findUnique({
     where: {
       id: formData.get("userId") as string,
@@ -88,6 +89,7 @@ export async function createBookingAction(formData: FormData) {
   const email = formData.get("email") as string;
   const flashId = formData.get("flashId") as string
   const redirectUrl = formData.get("redirectUrl") as string;
+  const isPaid = formData.get("isPaid") as string;
 
   const fromTime = formData.get("fromTime") as string;
   const eventDate = formData.get("eventDate") as string;
@@ -101,7 +103,7 @@ export async function createBookingAction(formData: FormData) {
     name: name,
     email: email,
     flashId: flashId,
-    isPaid: false,
+    isPaid: Boolean(isPaid),
     startTime: startDateTime,
     endTime: endDateTime,
   });

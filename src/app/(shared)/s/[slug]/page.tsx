@@ -56,6 +56,14 @@ export default async function SharedPage({
                           width={600}
                         />
                       </div>
+                      {/* Sold Out Overlay */}
+                      {/* {flash.isPaid && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60">
+                          <span className="text-white text-lg font-bold">
+                            SOLD OUT
+                          </span>
+                        </div>
+                      )} */}
                       <div className="p-4">
                         <h3 className="text-lg font-semibold mb-2">
                           {flash.title}

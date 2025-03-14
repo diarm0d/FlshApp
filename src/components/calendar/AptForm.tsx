@@ -32,6 +32,7 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
           <input type="hidden" name="eventDate" value={date} />
           <input type="hidden" name="redirectUrl" value={profileUrl} />
           <input type="hidden" name="orderId" value={orderId} />
+          <input type="hidden" name="isPaid" value={isPaid ? "true" : "false"} />
           <input
             type="hidden"
             name="meetingLength"
@@ -57,21 +58,12 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
                   headers: { "Content-Type": "application/json" },
                 });
 
-                console.log('this is the res" ', res)
-
-                const text = await res.text(); // Read response as text to debug
-                const data = JSON.parse(text);
-                console.log("PayPal API response:", data);
+                console.log(res)
 
                 try {
-                  // Ensure response is JSON
-                  if (!res.ok) {
-                    throw new Error(
-                      `PayPal API error: ${res.status} - ${await res.text()}`
-                    );
-                  }
+                  const data = await res.json();
 
-                  const data = JSON.parse(text);
+                  console.log(data);
 
                   if (!data.orderID) {
                     throw new Error("PayPal API response missing orderID");
@@ -84,6 +76,10 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
                 }
               }}
               onApprove={async (data) => {
+                console.log(
+                  "onApprove - transaction was approved, but not authorized",
+                  data
+                );
                 setIsPaid(true);
                 setOrderId(data.orderID);
                 await createBookingAction(formData);
