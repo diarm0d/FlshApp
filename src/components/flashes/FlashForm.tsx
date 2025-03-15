@@ -90,10 +90,13 @@ const FlashForm = ({
     setErrors(null);
 
     const payload = Object.fromEntries(data.entries());
+    console.log("payload", payload);
     const flashParsed = await insertFlashParams.safeParseAsync({
       profileId,
       ...payload,
+      isBooked: payload.isBooked,
     });
+    console.log("flashParsed", flashParsed);
     if (!flashParsed.success) {
       setErrors(flashParsed?.error.flatten().fieldErrors);
       return;
@@ -107,7 +110,7 @@ const FlashForm = ({
       id: flash?.id ?? "",
       userId: flash?.userId ?? "",
       ...values,
-      isBooked: false,
+      isBooked: flash?.isBooked ?? false,
     };
     try {
       startMutation(async () => {
@@ -193,6 +196,13 @@ const FlashForm = ({
         >
           Flash Image
         </Label>
+        <div className="hidden">
+          <Input
+            type="checkbox"
+            name="isBooked"
+            defaultChecked={flash?.isBooked ?? false}
+          />
+        </div>
         <Input
           type="hidden"
           name="flashImage"
