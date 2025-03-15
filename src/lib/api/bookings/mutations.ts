@@ -109,6 +109,10 @@ export async function createBookingAction(formData: FormData) {
   });
 
   //Update flash is booked
+const flashData = await db.flash.update({
+  where: { id: flashId },
+  data: { isBooked: Boolean(isPaid) },
+});
 
   await nylas.events.create({
     identifier: userData?.grantId as string,

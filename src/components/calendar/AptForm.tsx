@@ -17,7 +17,9 @@ interface Props {
 export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
   const [isPaid, setIsPaid] = useState(false);
   const [orderId, setOrderId] = useState("");
-  const [formData, setFormData] = useState(new FormData());
+  const [formData, setFormData] = useState(new FormData())
+  
+  console.log('isPaid', isPaid);
 
   return (
     <div style={{ colorScheme: "none" }}>
@@ -76,10 +78,6 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
                 }
               }}
               onApprove={async (data) => {
-                console.log(
-                  "onApprove - transaction was approved, but not authorized",
-                  data
-                );
                 setIsPaid(true);
                 setOrderId(data.orderID);
                 await createBookingAction(formData);

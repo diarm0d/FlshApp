@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 import { type Flash, insertFlashParams } from "@/lib/db/schema/flashes";
 import {
@@ -106,6 +107,7 @@ const FlashForm = ({
       id: flash?.id ?? "",
       userId: flash?.userId ?? "",
       ...values,
+      isBooked: false,
     };
     try {
       startMutation(async () => {
@@ -276,6 +278,28 @@ const FlashForm = ({
           )}
         </div>
       )}
+      {/* <div>
+        <div className="">
+          <Label htmlFor="isBooked">Booked</Label>
+          <Switch
+            id="isBooked"
+            name="isBooked"
+            defaultChecked={flash?.isBooked}
+            onCheckedChange={(checked) => {
+              const formData = new FormData();
+              formData.set("isBooked", String(checked));
+              handleSubmit(formData);
+            }}
+          />
+          {errors?.isBooked ? (
+            <p className="text-xs text-destructive mt-2">
+              {errors.isBooked[0]}
+            </p>
+          ) : (
+            <div className="h-6" />
+          )}
+        </div>
+      </div> */}
       {/* Schema fields end */}
 
       {/* Save Button */}

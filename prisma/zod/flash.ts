@@ -6,6 +6,7 @@ export const flashSchema = z.object({
   title: z.string(),
   description: z.string(),
   flashImage: z.string(),
+  isBooked: z.boolean(),
   profileId: z.string(),
   userId: z.string(),
   createdAt: z.date(),
