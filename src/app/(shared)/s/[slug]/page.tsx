@@ -43,7 +43,7 @@ export default async function SharedPage({
                       key={flash.id}
                       className="rounded-lg border text-card-foreground shadow-sm overflow-hidden bg-secondary"
                     >
-                      <div className="w-full h-48 bg-white">
+                      <div className="w-full h-48 bg-white relative">
                         <Image
                           alt={flash.title}
                           className="w-full h-48"
@@ -55,15 +55,15 @@ export default async function SharedPage({
                           }}
                           width={600}
                         />
+                        {/* Sold Out Overlay */}
+                        {flash.isBooked && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60">
+                            <span className="text-white text-lg font-bold">
+                              SOLD OUT
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      {/* Sold Out Overlay */}
-                      {flash.isBooked && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60">
-                          <span className="text-white text-lg font-bold">
-                            SOLD OUT
-                          </span>
-                        </div>
-                      )}
                       <div className="p-4">
                         <h3 className="text-lg font-semibold mb-2">
                           {flash.title}

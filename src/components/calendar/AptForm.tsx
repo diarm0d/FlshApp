@@ -56,16 +56,12 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
               createOrder={async () => {
                 const res = await fetch("/api/paypal", {
                   method: "POST",
-                  body: JSON.stringify({ amount: 0.01 }),
+                  body: JSON.stringify({ amount: flash.profile.depositAmount }),
                   headers: { "Content-Type": "application/json" },
                 });
 
-                console.log(res)
-
                 try {
                   const data = await res.json();
-
-                  console.log(data);
 
                   if (!data.orderID) {
                     throw new Error("PayPal API response missing orderID");
