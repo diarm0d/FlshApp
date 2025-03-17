@@ -59,6 +59,7 @@ const FlashForm = ({
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [flashImage, setFlashImage] = useState<string>(flash?.flashImage ?? "");
+
   const [pending, startMutation] = useTransition();
 
   const router = useRouter();
@@ -90,13 +91,11 @@ const FlashForm = ({
     setErrors(null);
 
     const payload = Object.fromEntries(data.entries());
-    console.log("payload", payload);
     const flashParsed = await insertFlashParams.safeParseAsync({
       profileId,
       ...payload,
-      isBooked: payload.isBooked,
+      isBooked: flash?.isBooked ?? false,
     });
-    console.log("flashParsed", flashParsed);
     if (!flashParsed.success) {
       setErrors(flashParsed?.error.flatten().fieldErrors);
       return;
@@ -196,13 +195,6 @@ const FlashForm = ({
         >
           Flash Image
         </Label>
-        <div className="hidden">
-          <Input
-            type="checkbox"
-            name="isBooked"
-            defaultChecked={flash?.isBooked ?? false}
-          />
-        </div>
         <Input
           type="hidden"
           name="flashImage"
@@ -253,7 +245,6 @@ const FlashForm = ({
           <div className="h-6" />
         )}
       </div>
-
       {profileId ? null : (
         <div>
           <Label
@@ -289,32 +280,33 @@ const FlashForm = ({
         </div>
       )}
       {/* <div>
-        <div className="">
-          <Label htmlFor="isBooked">Booked</Label>
-          <Switch
-            id="isBooked"
-            name="isBooked"
-            defaultChecked={flash?.isBooked}
-            onCheckedChange={(checked) => {
-              const formData = new FormData();
-              formData.set("isBooked", String(checked));
-              handleSubmit(formData);
-            }}
-          />
-          {errors?.isBooked ? (
-            <p className="text-xs text-destructive mt-2">
-              {errors.isBooked[0]}
-            </p>
-          ) : (
-            <div className="h-6" />
+        <Label
+          htmlFor="isBooked"
+          className={cn(
+            "mb-2 inline-block",
+            errors?.profileId ? "text-destructive" : ""
           )}
-        </div>
+        >
+          Booked
+        </Label>
+        <Switch
+          id="isBooked"
+          name="isBooked"
+          checked={Boolean(isBooked)}
+          onCheckedChange={(checked) => {
+            console.log(checked);
+            setIsBooked(Boolean(checked));
+          }}
+        />
+        {errors?.isBooked ? (
+          <p className="text-xs text-destructive mt-2">{errors.isBooked[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
       </div> */}
       {/* Schema fields end */}
-
       {/* Save Button */}
       <SaveButton errors={hasErrors} editing={editing} />
-
       {/* Delete Button */}
       {editing ? (
         <Button
