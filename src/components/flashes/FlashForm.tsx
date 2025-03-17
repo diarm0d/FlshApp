@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 import { type Flash, insertFlashParams } from "@/lib/db/schema/flashes";
 import {
@@ -58,6 +59,7 @@ const FlashForm = ({
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [flashImage, setFlashImage] = useState<string>(flash?.flashImage ?? "");
+
   const [pending, startMutation] = useTransition();
 
   const router = useRouter();
@@ -92,6 +94,7 @@ const FlashForm = ({
     const flashParsed = await insertFlashParams.safeParseAsync({
       profileId,
       ...payload,
+      isBooked: flash?.isBooked ?? false,
     });
     if (!flashParsed.success) {
       setErrors(flashParsed?.error.flatten().fieldErrors);
@@ -106,6 +109,7 @@ const FlashForm = ({
       id: flash?.id ?? "",
       userId: flash?.userId ?? "",
       ...values,
+      isBooked: flash?.isBooked ?? false,
     };
     try {
       startMutation(async () => {
@@ -241,7 +245,6 @@ const FlashForm = ({
           <div className="h-6" />
         )}
       </div>
-
       {profileId ? null : (
         <div>
           <Label
@@ -276,11 +279,34 @@ const FlashForm = ({
           )}
         </div>
       )}
+      {/* <div>
+        <Label
+          htmlFor="isBooked"
+          className={cn(
+            "mb-2 inline-block",
+            errors?.profileId ? "text-destructive" : ""
+          )}
+        >
+          Booked
+        </Label>
+        <Switch
+          id="isBooked"
+          name="isBooked"
+          checked={Boolean(isBooked)}
+          onCheckedChange={(checked) => {
+            console.log(checked);
+            setIsBooked(Boolean(checked));
+          }}
+        />
+        {errors?.isBooked ? (
+          <p className="text-xs text-destructive mt-2">{errors.isBooked[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div> */}
       {/* Schema fields end */}
-
       {/* Save Button */}
       <SaveButton errors={hasErrors} editing={editing} />
-
       {/* Delete Button */}
       {editing ? (
         <Button

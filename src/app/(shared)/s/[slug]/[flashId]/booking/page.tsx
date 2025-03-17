@@ -1,8 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { CalendarX2, ClockIcon, MapPin } from "lucide-react";
 import { getFlashById } from "@/lib/api/flashes/queries";
 import { notFound } from "next/navigation";
@@ -10,7 +7,9 @@ import { getAvailableTimesById } from "@/lib/api/availableTimes/queries";
 import { CalendarWrapper } from "@/components/calendar/CalendarWrapper";
 import Image from "next/image";
 import TimeTable from "@/components/calendar/TimeTable";
-import { createBookingAction } from "@/lib/api/bookings/mutations";
+import { AptForm } from "@/components/calendar/AptForm";
+import { CompleteFlash } from "@/lib/db/schema/flashes";
+
 
 export default async function BookingPage({
   params,
@@ -90,7 +89,8 @@ export default async function BookingPage({
                   orientation="horizontal"
                   className="w-full h-[1px]  my-8"
                 />
-                <form
+                <AptForm time={time} date={date} profileUrl={profileUrl} flash={flash?.flash as CompleteFlash} />
+                {/* <form
                   action={createBookingAction}
                   className="flex flex-col gap-y-4"
                 >
@@ -124,7 +124,7 @@ export default async function BookingPage({
                   <Button type="submit" className="w-full mt-5">
                     Pay Deposit
                   </Button>
-                </form>
+                </form> */}
               </CardContent>
             </Card>
           ) : (

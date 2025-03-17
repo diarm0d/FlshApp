@@ -30,6 +30,12 @@ export default async function FlashPage({
                 priority
               />
             </div>
+            {/* Sold Out Overlay */}
+            {flash.isBooked && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60">
+                <span className="text-white text-lg font-bold">SOLD OUT</span>
+              </div>
+            )}
           </div>
         </div>
         <div className="space-y-6 mt-4">
@@ -64,7 +70,7 @@ export default async function FlashPage({
           </div>
           <div className="grid grid-col-1 gap-4">
             <Link href={`${flashId}/booking`}>
-              <Button className="w-full " size="lg">
+              <Button className="w-full " size="lg" disabled={flash.isBooked}>
                 Book Appointment
               </Button>
             </Link>
