@@ -98,6 +98,7 @@ model Flash {
   title       String
   description String
   flashImage  String
+  isBooked    Boolean   @default(false)
   profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId   String
   userId      String
