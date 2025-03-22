@@ -30,6 +30,19 @@ import {
 
 import currencyCodes from "currency-codes";
 
+interface Place {
+  formattedAddress: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  displayName: {
+    text: string;
+    languageCode: string;
+  };
+}
+
+
 const frequentCurrencies = ["EUR", "GBP", "CHF", "DKK", "USD"];
 const currencies = currencyCodes.data
   .map((c) => ({
@@ -76,9 +89,7 @@ const ProfileForm = ({
     profile?.currency ?? "Euro"
   );
   const [isDeleting, setIsDeleting] = useState(false);
-  const [predictions, setPredictions] = useState<
-    { id: string; name: string }[]
-  >([]);
+  const [predictions, setPredictions] = useState<Place[]>([]);
 
   const [pending, startMutation] = useTransition();
 
@@ -224,8 +235,8 @@ const ProfileForm = ({
       );
       const data = await response.json();
 
-      if (data?.predictions) {
-        setPredictions(data.predictions);
+      if (data?.places) {
+        setPredictions(data.places);
       } else {
         setPredictions([]);
       }
@@ -235,93 +246,89 @@ const ProfileForm = ({
     }
   };
 
- 
+  console.log(predictions)
   return (
-        <form
-          action={handleSubmit}
-          onChange={handleChange}
-          className={"space-y-4"}
+    <form action={handleSubmit} onChange={handleChange} className={"space-y-4"}>
+      {/* Schema fields start */}
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.name ? "text-destructive" : ""
+          )}
         >
-          {/* Schema fields start */}
-          <div>
-            <Label
-              className={cn(
-                "mb-2 inline-block",
-                errors?.name ? "text-destructive" : ""
-              )}
-            >
-              Username
-            </Label>
-            <Input
-              type="text"
-              name="name"
-              placeholder="Enter your name"
-              className={cn(errors?.name ? "ring ring-destructive" : "")}
-              value={userName}
-              onChange={(e) => handleUserNameChange(e)}
-            />
-            {errors?.name ? (
-              <p className="text-xs text-destructive mt-2">{errors.name[0]}</p>
-            ) : (
-              <div className="h-6" />
+          Username
+        </Label>
+        <Input
+          type="text"
+          name="name"
+          placeholder="Enter your name"
+          className={cn(errors?.name ? "ring ring-destructive" : "")}
+          value={userName}
+          onChange={(e) => handleUserNameChange(e)}
+        />
+        {errors?.name ? (
+          <p className="text-xs text-destructive mt-2">{errors.name[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.slug ? "text-destructive" : ""
+          )}
+        >
+          Slug
+        </Label>
+        <div className="flex rounder-md">
+          <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-muted bg-muted text-sm text-muted-foreground">
+            flsh.app/s/
+          </span>
+          <Input
+            type="text"
+            name="slug"
+            className={cn(
+              errors?.slug
+                ? "ring ring-destructive rounded-l-none"
+                : "rounded-l-none"
             )}
-          </div>
-          <div>
-            <Label
-              className={cn(
-                "mb-2 inline-block",
-                errors?.slug ? "text-destructive" : ""
-              )}
-            >
-              Slug
-            </Label>
-            <div className="flex rounder-md">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-muted bg-muted text-sm text-muted-foreground">
-                flsh.app/s/
-              </span>
-              <Input
-                type="text"
-                name="slug"
-                className={cn(
-                  errors?.slug
-                    ? "ring ring-destructive rounded-l-none"
-                    : "rounded-l-none"
-                )}
-                readOnly
-                value={slug}
-              />
-            </div>
-            {errors?.slug ? (
-              <p className="text-xs text-destructive mt-2">{errors.slug[0]}</p>
-            ) : (
-              <div className="h-6" />
-            )}
-          </div>
-          <div>
-            <Label
-              className={cn(
-                "mb-2 inline-block",
-                errors?.description ? "text-destructive" : ""
-              )}
-            >
-              Profile Bio
-            </Label>
-            <Input
-              type="text"
-              name="description"
-              placeholder="Enter your bio"
-              className={cn(errors?.description ? "ring ring-destructive" : "")}
-              defaultValue={profile?.description ?? ""}
-            />
-            {errors?.description ? (
-              <p className="text-xs text-destructive mt-2">
-                {errors.description[0]}
-              </p>
-            ) : (
-              <div className="h-6" />
-            )}
-          </div>
-          {/* <div>
+            readOnly
+            value={slug}
+          />
+        </div>
+        {errors?.slug ? (
+          <p className="text-xs text-destructive mt-2">{errors.slug[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.description ? "text-destructive" : ""
+          )}
+        >
+          Profile Bio
+        </Label>
+        <Input
+          type="text"
+          name="description"
+          placeholder="Enter your bio"
+          className={cn(errors?.description ? "ring ring-destructive" : "")}
+          defaultValue={profile?.description ?? ""}
+        />
+        {errors?.description ? (
+          <p className="text-xs text-destructive mt-2">
+            {errors.description[0]}
+          </p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -342,7 +349,7 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div> */}
-          {/* <div>
+      {/* <div>
         <Label
           className={cn(
             "mb-2 inline-block",
@@ -359,172 +366,164 @@ const ProfileForm = ({
           <div className="h-6" />
         )}
       </div> */}
-          <div>
-            <Label
-              className={cn(
-                "mb-2 inline-block",
-                errors?.sessionDuration ? "text-destructive" : ""
-              )}
-            >
-              Session Duration (in minutes)
-            </Label>
-            <Input
-              type="text"
-              name="sessionDuration"
-              placeholder="Enter session duration"
-              className={cn(
-                errors?.sessionDuration ? "ring ring-destructive" : ""
-              )}
-              defaultValue={profile?.sessionDuration ?? ""}
-            />
-            {errors?.sessionDuration ? (
-              <p className="text-xs text-destructive mt-2">
-                {errors.sessionDuration[0]}
-              </p>
-            ) : (
-              <div className="h-6" />
-            )}
-          </div>
-          <div>
-            <Label
-              className={cn(
-                "mb-2 inline-block",
-                errors?.depositAmount ? "text-destructive" : ""
-              )}
-            >
-              Currency
-            </Label>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  {selectedCurrency}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[250px] h-[400px] overflow-scroll">
-                {currencies.map((currency) => (
-                  <DropdownMenuItem
-                    key={currency.code}
-                    onSelect={() => {
-                      setSelectedCurrency(currency.name);
-                    }}
-                  >
-                    {currency.name} ({currency.code})
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <input type="hidden" name="currency" value={selectedCurrency} />
-            {errors?.currency ? (
-              <p className="text-xs text-destructive mt-2">
-                {errors.currency[0]}
-              </p>
-            ) : (
-              <div className="h-6" />
-            )}
-          </div>
-          <div>
-            <Label
-              className={cn(
-                "mb-2 inline-block",
-                errors?.depositAmount ? "text-destructive" : ""
-              )}
-            >
-              Deposit Amount
-            </Label>
-            <Input
-              type="text"
-              name="depositAmount"
-              placeholder="Enter deposit amount"
-              className={cn(
-                errors?.depositAmount ? "ring ring-destructive" : ""
-              )}
-              defaultValue={profile?.depositAmount ?? ""}
-            />
-            {errors?.depositAmount ? (
-              <p className="text-xs text-destructive mt-2">
-                {errors.depositAmount[0]}
-              </p>
-            ) : (
-              <div className="h-6" />
-            )}
-          </div>
-          <div>
-            <Label
-              className={cn(
-                "mb-2 inline-block",
-                errors?.slug ? "text-destructive" : ""
-              )}
-            >
-              Business Name / Location
-            </Label>
-            <Input
-              type="text"
-              value={placeName}
-              onChange={handleInputChange}
-              placeholder="Enter a location"
-            />
-
-            {predictions.length > 0 && (
-              <ul className="border rounded bg-white shadow-md absolute">
-                {predictions.map((prediction) => (
-                  <li
-                    key={prediction.id}
-                    className="p-2 hover:bg-gray-200 cursor-pointer"
-                    onClick={() => {
-                      setPlaceId(prediction.id);
-                      setPlaceName(prediction.name);
-                      setPredictions([]);
-                    }}
-                  >
-                    {prediction.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <input type="hidden" name="placeId" value={placeId} />
-          <input type="hidden" name="placeName" value={placeName} />
-          {errors?.placeId ? (
-            <p className="text-xs text-destructive mt-2">{errors.placeId[0]}</p>
-          ) : errors?.placeName ? (
-            <p className="text-xs text-destructive mt-2">
-              {errors.placeName[0]}
-            </p>
-          ) : (
-            <div className="h-6" />
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.sessionDuration ? "text-destructive" : ""
           )}
-          {/* Schema fields end */}
-
-          {/* Save Button */}
-          <SaveButton errors={hasErrors} editing={editing} />
-
-          {/* Delete Button */}
-          {editing ? (
-            <Button
-              type="button"
-              disabled={isDeleting || pending || hasErrors}
-              variant={"destructive"}
-              onClick={() => {
-                setIsDeleting(true);
-                closeModal && closeModal();
-                startMutation(async () => {
-                  addOptimistic &&
-                    addOptimistic({ action: "delete", data: profile });
-                  const error = await deleteProfileAction(profile.id);
-                  setIsDeleting(false);
-                  const errorFormatted = {
-                    error: error ?? "Error",
-                    values: profile,
-                  };
-
-                  onSuccess("delete", error ? errorFormatted : undefined);
-                });
-              }}
-            >
-              Delet{isDeleting ? "ing..." : "e"}
+        >
+          Session Duration (in minutes)
+        </Label>
+        <Input
+          type="text"
+          name="sessionDuration"
+          placeholder="Enter session duration"
+          className={cn(errors?.sessionDuration ? "ring ring-destructive" : "")}
+          defaultValue={profile?.sessionDuration ?? ""}
+        />
+        {errors?.sessionDuration ? (
+          <p className="text-xs text-destructive mt-2">
+            {errors.sessionDuration[0]}
+          </p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.depositAmount ? "text-destructive" : ""
+          )}
+        >
+          Currency
+        </Label>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full justify-between">
+              {selectedCurrency}
             </Button>
-          ) : null}
-        </form>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[250px] h-[400px] overflow-scroll">
+            {currencies.map((currency) => (
+              <DropdownMenuItem
+                key={currency.code}
+                onSelect={() => {
+                  setSelectedCurrency(currency.name);
+                }}
+              >
+                {currency.name} ({currency.code})
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <input type="hidden" name="currency" value={selectedCurrency} />
+        {errors?.currency ? (
+          <p className="text-xs text-destructive mt-2">{errors.currency[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.depositAmount ? "text-destructive" : ""
+          )}
+        >
+          Deposit Amount
+        </Label>
+        <Input
+          type="text"
+          name="depositAmount"
+          placeholder="Enter deposit amount"
+          className={cn(errors?.depositAmount ? "ring ring-destructive" : "")}
+          defaultValue={profile?.depositAmount ?? ""}
+        />
+        {errors?.depositAmount ? (
+          <p className="text-xs text-destructive mt-2">
+            {errors.depositAmount[0]}
+          </p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.slug ? "text-destructive" : ""
+          )}
+        >
+          Business Name / Location
+        </Label>
+        <Input
+          type="text"
+          value={placeName}
+          onChange={handleInputChange}
+          placeholder="Enter a location"
+        />
+
+        {predictions.length > 0 && (
+          <ul className="border rounded bg-white shadow-md absolute">
+            {predictions.map((prediction, i) => (
+              <li
+                key={i}
+                className="p-2 hover:bg-gray-200 cursor-pointer text-black"
+                onClick={() => {
+                  setPlaceId(prediction.formattedAddress);
+                  setPlaceName(prediction.displayName.text);
+                  setPredictions([]);
+                }}
+              >
+                {prediction.displayName.text}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <input type="hidden" name="placeId" value={placeId} />
+      <input type="hidden" name="placeName" value={placeName} />
+      {errors?.placeId ? (
+        <p className="text-xs text-destructive mt-2">{errors.placeId[0]}</p>
+      ) : errors?.placeName ? (
+        <p className="text-xs text-destructive mt-2">{errors.placeName[0]}</p>
+      ) : (
+        <div className="h-6" />
+      )}
+      {/* Schema fields end */}
+
+      {/* Save Button */}
+      <SaveButton errors={hasErrors} editing={editing} />
+
+      {/* Delete Button */}
+      {editing ? (
+        <Button
+          type="button"
+          disabled={isDeleting || pending || hasErrors}
+          variant={"destructive"}
+          onClick={() => {
+            setIsDeleting(true);
+            closeModal && closeModal();
+            startMutation(async () => {
+              addOptimistic &&
+                addOptimistic({ action: "delete", data: profile });
+              const error = await deleteProfileAction(profile.id);
+              setIsDeleting(false);
+              const errorFormatted = {
+                error: error ?? "Error",
+                values: profile,
+              };
+
+              onSuccess("delete", error ? errorFormatted : undefined);
+            });
+          }}
+        >
+          Delet{isDeleting ? "ing..." : "e"}
+        </Button>
+      ) : null}
+    </form>
   );
 };
 
