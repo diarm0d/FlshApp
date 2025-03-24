@@ -19,6 +19,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Search, X, Loader2 } from "lucide-react";
 
 import { type Profile, insertProfileParams } from "@/lib/db/schema/profiles";
 import {
@@ -29,6 +42,7 @@ import {
 } from "@/lib/actions/profiles";
 
 import currencyCodes from "currency-codes";
+import { debounce } from "lodash";
 
 interface Place {
   formattedAddress: string;
@@ -41,7 +55,6 @@ interface Place {
     languageCode: string;
   };
 }
-
 
 const frequentCurrencies = ["EUR", "GBP", "CHF", "DKK", "USD"];
 const currencies = currencyCodes.data
@@ -83,7 +96,13 @@ const ProfileForm = ({
 
   const [userName, setUserName] = useState(profile?.name ?? "");
   const [slug, setSlug] = useState(profile?.slug ?? "");
-  const [placeId, setPlaceId] = useState(profile?.placeId ?? "");
+  const [formattedAddress, setFormattedAddress] = useState(
+    profile?.formattedAddress ?? ""
+  );
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [placeName, setPlaceName] = useState(profile?.placeName ?? "");
   const [selectedCurrency, setSelectedCurrency] = useState(
     profile?.currency ?? "Euro"
@@ -183,43 +202,6 @@ const ProfileForm = ({
     }
   };
 
-  const fetchPredictions = async (input: string) => {
-    if (!input) return [];
-
-    const requestOptions: RequestInit = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-        "X-Goog-FieldMask": "places.id,places.displayName",
-      },
-      body: JSON.stringify({
-        input,
-        languageCode: "en",
-      }),
-    };
-
-    try {
-      const response = await fetch(
-        "https://places.googleapis.com/v1/places:autocomplete",
-        requestOptions
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          `Error: ${errorData.error.message} (Code: ${errorData.error.code})`
-        );
-      }
-
-      const data = await response.json();
-      return data.places || [];
-    } catch (error) {
-      console.error("Failed to fetch autocomplete predictions:", error);
-      return [];
-    }
-  };
-
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setPlaceName(input);
@@ -246,7 +228,20 @@ const ProfileForm = ({
     }
   };
 
-  console.log(predictions)
+  const handleSelect = (prediction: Place) => {
+    setFormattedAddress(prediction.formattedAddress);
+    setPlaceName(prediction.displayName.text);
+    setPredictions([]);
+    setOpen(false);
+  };
+
+  const handleClear = () => {
+    setPlaceName("");
+    setFormattedAddress("");
+    setPredictions([]);
+    inputRef.current?.focus();
+  };
+
   return (
     <form action={handleSubmit} onChange={handleChange} className={"space-y-4"}>
       {/* Schema fields start */}
@@ -405,7 +400,7 @@ const ProfileForm = ({
               {selectedCurrency}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[250px] h-[400px] overflow-scroll">
+          <DropdownMenuContent className="w-[var(--radix-popover-trigger-width)] h-[400px] overflow-scroll">
             {currencies.map((currency) => (
               <DropdownMenuItem
                 key={currency.code}
@@ -458,40 +453,131 @@ const ProfileForm = ({
         >
           Business Name / Location
         </Label>
-        <Input
-          type="text"
-          value={placeName}
-          onChange={handleInputChange}
-          placeholder="Enter a location"
-        />
+        <div className="relative">
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <div className="flex w-full items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    ref={inputRef}
+                    type="text"
+                    value={placeName}
+                    onChange={handleInputChange}
+                    placeholder="Enter a location"
+                    className="pl-9 pr-10"
+                    onFocus={(e) => {
+                      setOpen(true);
+                      e.target.select(); // Ensures input is active
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevents unexpected popover close
+                      setOpen(true);
+                    }}
+                  />
+                  {placeName && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-0 hover:bg-transparent"
+                      onClick={handleClear}
+                    >
+                      <X className="h-4 w-4 text-muted-foreground" />
+                      <span className="sr-only">Clear</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </PopoverTrigger>
+            <PopoverContent
+              className="p-0 w-[var(--radix-popover-trigger-width)]"
+              align="start"
+              side="top"
+            >
+              <Command>
+                <CommandList className="overflow-scroll">
+                  {isLoading ? (
+                    <div className="flex items-center justify-center py-6">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : predictions.length === 0 ? (
+                    <CommandEmpty>No locations found</CommandEmpty>
+                  ) : (
+                    <CommandGroup>
+                      {predictions.map((prediction, i) => (
+                        <CommandItem
+                          key={i}
+                          onSelect={() => handleSelect(prediction)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              {prediction.displayName.text}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {prediction.formattedAddress}
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+        {/* <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Input
+              type="text"
+              value={placeName}
+              onChange={handleInputChange}
+              placeholder="Enter a location"
+              className="w-full"
+            />
+          </DropdownMenuTrigger>
 
-        {predictions.length > 0 && (
-          <ul className="border rounded bg-white shadow-md absolute">
-            {predictions.map((prediction, i) => (
-              <li
-                key={i}
-                className="p-2 hover:bg-gray-200 cursor-pointer text-black"
-                onClick={() => {
-                  setPlaceId(prediction.formattedAddress);
-                  setPlaceName(prediction.displayName.text);
-                  setPredictions([]);
-                }}
-              >
-                {prediction.displayName.text}
-              </li>
-            ))}
-          </ul>
+          {predictions.length > 0 && (
+            <DropdownMenuContent align="start" className="w-full">
+              {predictions.map((prediction, i) => (
+                <DropdownMenuItem
+                  key={i}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setFormattedAddress(prediction.formattedAddress);
+                    setPlaceName(prediction.displayName.text);
+                    setPredictions([]);
+                  }}
+                >
+                  {prediction.displayName.text}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          )}
+        </DropdownMenu> */}
+        <input
+          type="hidden"
+          name="formattedAddress "
+          value={formattedAddress}
+        />
+        <input type="hidden" name="placeName" value={placeName} />
+
+        {formattedAddress && (
+          <p className="text-xs text-muted-foreground mt-2 truncate">
+            {formattedAddress}
+          </p>
+        )}
+        {errors?.formattedAddress ? (
+          <p className="text-xs text-destructive mt-2">
+            {errors.formattedAddress[0]}
+          </p>
+        ) : errors?.placeName ? (
+          <p className="text-xs text-destructive mt-2">{errors.placeName[0]}</p>
+        ) : (
+          <div className="h-6" />
         )}
       </div>
-      <input type="hidden" name="placeId" value={placeId} />
-      <input type="hidden" name="placeName" value={placeName} />
-      {errors?.placeId ? (
-        <p className="text-xs text-destructive mt-2">{errors.placeId[0]}</p>
-      ) : errors?.placeName ? (
-        <p className="text-xs text-destructive mt-2">{errors.placeName[0]}</p>
-      ) : (
-        <div className="h-6" />
-      )}
       {/* Schema fields end */}
 
       {/* Save Button */}
