@@ -20,7 +20,7 @@ export default function TogglePublic({
   isSubscribed: boolean;
   profile: Profile;
 }) {
-  const pageLink = "http://localhost:3000/s/" + profile.slug;
+  const pageLink = "https://flsh.app/s/" + profile.slug;
   return (
     <div className="relative">
       {isSubscribed ? null : (

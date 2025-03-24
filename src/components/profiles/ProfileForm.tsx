@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -13,6 +13,25 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useBackPath } from "@/components/shared/BackButton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Search, X, Loader2 } from "lucide-react";
 
 import { type Profile, insertProfileParams } from "@/lib/db/schema/profiles";
 import {
@@ -21,6 +40,39 @@ import {
   updateProfileAction,
   createProfileOnboardingAction,
 } from "@/lib/actions/profiles";
+
+import currencyCodes from "currency-codes";
+import { debounce } from "lodash";
+
+interface Place {
+  formattedAddress: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  displayName: {
+    text: string;
+    languageCode: string;
+  };
+}
+
+const frequentCurrencies = ["EUR", "GBP", "CHF", "DKK", "USD"];
+const currencies = currencyCodes.data
+  .map((c) => ({
+    code: c.code,
+    name: c.currency,
+  }))
+  .sort((a, b) => {
+    // Prioritize the frequent currencies
+    const aIsFrequent = frequentCurrencies.includes(a.code);
+    const bIsFrequent = frequentCurrencies.includes(b.code);
+
+    if (aIsFrequent && !bIsFrequent) return -1;
+    if (!aIsFrequent && bIsFrequent) return 1;
+
+    // Otherwise, sort alphabetically
+    return a.name.localeCompare(b.name);
+  });
 
 const ProfileForm = ({
   profile,
@@ -44,7 +96,20 @@ const ProfileForm = ({
 
   const [userName, setUserName] = useState(profile?.name ?? "");
   const [slug, setSlug] = useState(profile?.slug ?? "");
+  const [formattedAddress, setFormattedAddress] = useState(
+    profile?.formattedAddress ?? ""
+  );
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [placeName, setPlaceName] = useState(profile?.placeName ?? "");
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    profile?.currency ?? "Euro"
+  );
   const [isDeleting, setIsDeleting] = useState(false);
+  const [predictions, setPredictions] = useState<Place[]>([]);
+
   const [pending, startMutation] = useTransition();
 
   const router = useRouter();
@@ -117,9 +182,9 @@ const ProfileForm = ({
           ? await createProfileOnboardingAction(values)
           : await createProfileAction(values);
 
-            if (onboarding && !error) {
-              router.push("/onboarding/calendar");
-            }
+        if (onboarding && !error) {
+          router.push("/onboarding/calendar");
+        }
 
         const errorFormatted = {
           error: error ?? "Error",
@@ -137,8 +202,48 @@ const ProfileForm = ({
     }
   };
 
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    setPlaceName(input);
+
+    if (input.length < 3) {
+      setPredictions([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/autocomplete?input=${encodeURIComponent(input)}`
+      );
+      const data = await response.json();
+
+      if (data?.places) {
+        setPredictions(data.places);
+      } else {
+        setPredictions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching autocomplete data:", error);
+      setPredictions([]);
+    }
+  };
+
+  const handleSelect = (prediction: Place) => {
+    setFormattedAddress(prediction.formattedAddress);
+    setPlaceName(prediction.displayName.text);
+    setPredictions([]);
+    setOpen(false);
+  };
+
+  const handleClear = () => {
+    setPlaceName("");
+    setFormattedAddress("");
+    setPredictions([]);
+    inputRef.current?.focus();
+  };
+
   return (
-    <form action={handleSubmit} onChange={handleChange} className={"space-y-8"}>
+    <form action={handleSubmit} onChange={handleChange} className={"space-y-4"}>
       {/* Schema fields start */}
       <div>
         <Label
@@ -152,6 +257,7 @@ const ProfileForm = ({
         <Input
           type="text"
           name="name"
+          placeholder="Enter your name"
           className={cn(errors?.name ? "ring ring-destructive" : "")}
           value={userName}
           onChange={(e) => handleUserNameChange(e)}
@@ -200,11 +306,12 @@ const ProfileForm = ({
             errors?.description ? "text-destructive" : ""
           )}
         >
-          Description
+          Profile Bio
         </Label>
         <Input
           type="text"
           name="description"
+          placeholder="Enter your bio"
           className={cn(errors?.description ? "ring ring-destructive" : "")}
           defaultValue={profile?.description ?? ""}
         />
@@ -261,11 +368,12 @@ const ProfileForm = ({
             errors?.sessionDuration ? "text-destructive" : ""
           )}
         >
-          Session Duration
+          Session Duration (in minutes)
         </Label>
         <Input
           type="text"
           name="sessionDuration"
+          placeholder="Enter session duration"
           className={cn(errors?.sessionDuration ? "ring ring-destructive" : "")}
           defaultValue={profile?.sessionDuration ?? ""}
         />
@@ -284,11 +392,47 @@ const ProfileForm = ({
             errors?.depositAmount ? "text-destructive" : ""
           )}
         >
+          Currency
+        </Label>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full justify-between">
+              {selectedCurrency}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[var(--radix-popover-trigger-width)] h-[400px] overflow-scroll">
+            {currencies.map((currency) => (
+              <DropdownMenuItem
+                key={currency.code}
+                onSelect={() => {
+                  setSelectedCurrency(currency.name);
+                }}
+              >
+                {currency.name} ({currency.code})
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <input type="hidden" name="currency" value={selectedCurrency} />
+        {errors?.currency ? (
+          <p className="text-xs text-destructive mt-2">{errors.currency[0]}</p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.depositAmount ? "text-destructive" : ""
+          )}
+        >
           Deposit Amount
         </Label>
         <Input
           type="text"
           name="depositAmount"
+          placeholder="Enter deposit amount"
           className={cn(errors?.depositAmount ? "ring ring-destructive" : "")}
           defaultValue={profile?.depositAmount ?? ""}
         />
@@ -296,6 +440,140 @@ const ProfileForm = ({
           <p className="text-xs text-destructive mt-2">
             {errors.depositAmount[0]}
           </p>
+        ) : (
+          <div className="h-6" />
+        )}
+      </div>
+      <div>
+        <Label
+          className={cn(
+            "mb-2 inline-block",
+            errors?.slug ? "text-destructive" : ""
+          )}
+        >
+          Business Name / Location
+        </Label>
+        <div className="relative">
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <div className="flex w-full items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    ref={inputRef}
+                    type="text"
+                    value={placeName}
+                    onChange={handleInputChange}
+                    placeholder="Enter a location"
+                    className="pl-9 pr-10"
+                    onFocus={(e) => {
+                      setOpen(true);
+                      e.target.select(); // Ensures input is active
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevents unexpected popover close
+                      setOpen(true);
+                    }}
+                  />
+                  {placeName && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-0 hover:bg-transparent"
+                      onClick={handleClear}
+                    >
+                      <X className="h-4 w-4 text-muted-foreground" />
+                      <span className="sr-only">Clear</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </PopoverTrigger>
+            <PopoverContent
+              className="p-0 w-[var(--radix-popover-trigger-width)]"
+              align="start"
+              side="top"
+            >
+              <Command>
+                <CommandList className="overflow-scroll">
+                  {isLoading ? (
+                    <div className="flex items-center justify-center py-6">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : predictions.length === 0 ? (
+                    <CommandEmpty>No locations found</CommandEmpty>
+                  ) : (
+                    <CommandGroup>
+                      {predictions.map((prediction, i) => (
+                        <CommandItem
+                          key={i}
+                          onSelect={() => handleSelect(prediction)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              {prediction.displayName.text}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {prediction.formattedAddress}
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+        {/* <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Input
+              type="text"
+              value={placeName}
+              onChange={handleInputChange}
+              placeholder="Enter a location"
+              className="w-full"
+            />
+          </DropdownMenuTrigger>
+
+          {predictions.length > 0 && (
+            <DropdownMenuContent align="start" className="w-full">
+              {predictions.map((prediction, i) => (
+                <DropdownMenuItem
+                  key={i}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setFormattedAddress(prediction.formattedAddress);
+                    setPlaceName(prediction.displayName.text);
+                    setPredictions([]);
+                  }}
+                >
+                  {prediction.displayName.text}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          )}
+        </DropdownMenu> */}
+        <input
+          type="hidden"
+          name="formattedAddress "
+          value={formattedAddress}
+        />
+        <input type="hidden" name="placeName" value={placeName} />
+
+        {formattedAddress && (
+          <p className="text-xs text-muted-foreground mt-2 truncate">
+            {formattedAddress}
+          </p>
+        )}
+        {errors?.formattedAddress ? (
+          <p className="text-xs text-destructive mt-2">
+            {errors.formattedAddress[0]}
+          </p>
+        ) : errors?.placeName ? (
+          <p className="text-xs text-destructive mt-2">{errors.placeName[0]}</p>
         ) : (
           <div className="h-6" />
         )}

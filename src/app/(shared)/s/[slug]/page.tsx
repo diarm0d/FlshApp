@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Flash } from "@/lib/db/schema/flashes";
 import Image from "next/image";
 import ShareButton from "@/components/profiles/ShareButton";
+import { MapPin } from "lucide-react";
 
 export default async function SharedPage({
   params,
@@ -34,6 +35,17 @@ export default async function SharedPage({
               <p className="text-gray-500 dark:text-gray-400">
                 {profile.description}
               </p>
+              <Link
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  `${profile.placeName}, ${profile.formattedAddress}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center bg-secondary text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-gray-700 transition-all w-fit max-w-full my-2"
+              >
+                <MapPin className="mr-2 h-5 w-5 text-white" />
+                <span className="truncate">{profile.placeName}</span>
+              </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 w-full overflow-y-scroll">
               {flashes.map((flash: Flash) => (

@@ -82,7 +82,10 @@ model Profile {
   description     String
   public          Boolean
   sessionDuration Int
+  currency        String   @default("Euro")
   depositAmount   Int
+  placeName       String   @default("Tattoo Studio")
+  formattedAddress String  @default("123 Weiner str, Berlin, 10999, Germany")
   userId          String
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())
