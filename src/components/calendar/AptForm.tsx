@@ -17,9 +17,9 @@ interface Props {
 export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
   const [isPaid, setIsPaid] = useState(false);
   const [orderId, setOrderId] = useState("");
-  const [formData, setFormData] = useState(new FormData())
-  
-  console.log('isPaid', isPaid);
+  const [formData, setFormData] = useState(new FormData());
+
+  console.log("flash", flash);
 
   return (
     <div style={{ colorScheme: "none" }}>
@@ -34,7 +34,11 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
           <input type="hidden" name="eventDate" value={date} />
           <input type="hidden" name="redirectUrl" value={profileUrl} />
           <input type="hidden" name="orderId" value={orderId} />
-          <input type="hidden" name="isPaid" value={isPaid ? "true" : "false"} />
+          <input
+            type="hidden"
+            name="isPaid"
+            value={isPaid ? "true" : "false"}
+          />
           <input
             type="hidden"
             name="meetingLength"
@@ -43,6 +47,12 @@ export const AptForm = ({ time, date, profileUrl, flash }: Props) => {
           <input type="hidden" name="userId" value={flash.userId} />
           <input type="hidden" name="flashId" value={flash.id} />
           <input type="hidden" name="flashTitle" value={flash.title} />
+          <input
+            type="hidden"
+            name="location"
+            value={`${flash.profile.placeName}, ${flash.profile.formattedAddress}`}
+          />
+
           <div className="flex flex-col gap-y-2">
             <Label>Your Name</Label>
             <Input name="name" placeholder="Enter your name" />

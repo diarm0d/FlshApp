@@ -91,6 +91,8 @@ export async function createBookingAction(formData: FormData) {
   const redirectUrl = formData.get("redirectUrl") as string;
   const isPaid = formData.get("isPaid") as string;
 
+  const location = formData.get("location") as string;
+
   const fromTime = formData.get("fromTime") as string;
   const eventDate = formData.get("eventDate") as string;
   const meetingLength = Number(formData.get("meetingLength"));
@@ -118,15 +120,16 @@ const flashData = await db.flash.update({
     identifier: userData?.grantId as string,
     requestBody: {
       title: customTitle,
-      description: formData.get("flashTitle") as string,
+      description: customTitle,
       when: {
         startTime: Math.floor(startDateTime.getTime() / 1000),
         endTime: Math.floor(endDateTime.getTime() / 1000),
       } as Timespan,
+      location: location,
       participants: [
         {
-          name: formData.get("name") as string,
-          email: formData.get("email") as string,
+          name: name,
+          email: email,
           status: "yes",
         },
       ],
