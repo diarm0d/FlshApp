@@ -35,7 +35,7 @@ export default async function LandingPage({
         </nav>
       </header>
       <main className="flex-1">
-        <section className="w-full h-[90vh] md:h-screen py-12 md:py-24 lg:py-32 xl:py-48">
+        <section className="w-full h-[90vh] md:h-screen flex items-center">
           <div className="container px-4 md:px-6">
             <div className="grid lg:grid-cols-[1fr_400px] gap-12 xl:grid-cols-[1fr_600px]">
               {/* <div className="bg-neutral-100 dark:bg-neutral-800 mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square" /> */}
@@ -68,16 +68,18 @@ export default async function LandingPage({
                 {/* </div> */}
               </div>
               <div className="order-1 md:order-2 relative aspect-video w-full h-max">
-                <div className="absolute top-0 -left-2 lg:top-0 lg:-left-4 size-40 lg:size-72 bg-[#D22B2B] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob ease-in-out" />
+                {/* <div className="absolute top-0 -left-2 lg:top-0 lg:-left-4 size-40 lg:size-72 bg-[#D22B2B] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob ease-in-out" />
                 <div className="absolute top-0 -right-2 lg:top-0 lg:-right-2 size-40 lg:size-72 bg-[#F9A602] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-2 ease-in-out" />
-                <div className="absolute  -bottom-10 left-12 lg:-bottom-24 lg:left-32 size-40 lg:size-72 bg-[#00b3ff] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-4 ease-in-out" />
+                <div className="absolute  -bottom-10 left-12 lg:-bottom-24 lg:left-32 size-40 lg:size-72 bg-[#00b3ff] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-4 ease-in-out" /> */}
                 <Image
-                  src="/hero-graphic.png"
+                  src="/HeroGraphic.png"
                   alt="hero img"
-                  fill
-                  objectFit="cover"
-                  sizes="100vw"
-                  style={{ objectPosition: "top" }}
+                  style={{
+                    aspectRatio: "500/500",
+                    objectFit: "contain",
+                  }}
+                  width={500}
+                  height={500}
                 />
               </div>
             </div>
@@ -149,7 +151,8 @@ export default async function LandingPage({
                   Sign Up for Release
                 </h2>
                 <p className="max-w-[600px] text-neutral-500 md:text-xl dark:text-neutral-400">
-                  Stay updated with the latest product news and release date information.
+                  Stay updated with the latest product news and release date
+                  information.
                 </p>
               </div>
               <div className="w-full max-w-sm space-y-2">
