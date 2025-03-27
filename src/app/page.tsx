@@ -5,11 +5,20 @@
  */
 import Image from "next/image";
 import Link from "next/link";
-import ClaimProfileButton from "../components/signup/ClaimProfileButton";
+import ClaimProfileButton from "@/components/signup/ClaimProfileButton";
+import Banner from "@/components/signup/Banner";
+import SignInButton from "@/components/signup/SignInButton";
 
-export default function LandingPage() {
+export default async function LandingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ beta: string }>;
+}) {
+  const { beta } = await searchParams;
+
   return (
     <div className="flex flex-col min-h-screen bg-[#F4F2EE] dark:bg-inherit">
+      <Banner />
       <header className="container px-4 lg:px-6 h-14 flex items-center">
         <Link className="flex items-center justify-center" href="#">
           <CalendarHeartIcon className="h-6 w-6" />
@@ -22,16 +31,11 @@ export default function LandingPage() {
           >
             Features
           </Link>
-          <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
-            href="/sign-in"
-          >
-            Sign In
-          </Link>
+          <SignInButton text='Sign In'/>
         </nav>
       </header>
       <main className="flex-1">
-        <section className="w-full h-[90vh] md:h-screen py-12 md:py-24 lg:py-32 xl:py-48">
+        <section className="w-full h-[90vh] md:h-screen flex items-center">
           <div className="container px-4 md:px-6">
             <div className="grid lg:grid-cols-[1fr_400px] gap-12 xl:grid-cols-[1fr_600px]">
               {/* <div className="bg-neutral-100 dark:bg-neutral-800 mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square" /> */}
@@ -47,7 +51,7 @@ export default function LandingPage() {
                     flashes all in one place.
                   </p>
                 </div>
-                <ClaimProfileButton />
+                <ClaimProfileButton beta={beta} />
                 {/* <div className="flex flex-col gap-2 min-[400px]:flex-row"> */}
                 {/* <Link
                     className="inline-flex h-10 items-center justify-center rounded-md bg-neutral-900 px-8 text-sm font-medium text-neutral-50 shadow transition-colors hover:bg-neutral-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90 dark:focus-visible:ring-neutral-300"
@@ -64,16 +68,18 @@ export default function LandingPage() {
                 {/* </div> */}
               </div>
               <div className="order-1 md:order-2 relative aspect-video w-full h-max">
-                <div className="absolute top-0 -left-2 lg:top-0 lg:-left-4 size-40 lg:size-72 bg-[#D22B2B] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob ease-in-out" />
+                {/* <div className="absolute top-0 -left-2 lg:top-0 lg:-left-4 size-40 lg:size-72 bg-[#D22B2B] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob ease-in-out" />
                 <div className="absolute top-0 -right-2 lg:top-0 lg:-right-2 size-40 lg:size-72 bg-[#F9A602] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-2 ease-in-out" />
-                <div className="absolute  -bottom-10 left-12 lg:-bottom-24 lg:left-32 size-40 lg:size-72 bg-[#00b3ff] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-4 ease-in-out" />
+                <div className="absolute  -bottom-10 left-12 lg:-bottom-24 lg:left-32 size-40 lg:size-72 bg-[#00b3ff] rounded-full light:mix-blend-multiply filter blur-3xl opacity-90 animate-blob animation-delay-4 ease-in-out" /> */}
                 <Image
-                  src="/hero-graphic.png"
+                  src="/HeroGraphic.png"
                   alt="hero img"
-                  fill
-                  objectFit="cover"
-                  sizes="100vw"
-                  style={{ objectPosition: "top" }}
+                  style={{
+                    aspectRatio: "500/500",
+                    objectFit: "contain",
+                  }}
+                  width={500}
+                  height={500}
                 />
               </div>
             </div>
@@ -104,31 +110,30 @@ export default function LandingPage() {
                 <ul className="grid gap-6">
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">🤝 Stay Connected</h3>
+                      <h3 className="text-xl font-bold">
+                        ✅ Manage Availability
+                      </h3>
                       <p className="text-neutral-500 dark:text-neutral-400">
-                        Chat with clients, manage bookings, and keep everything
-                        in one place—no more DMs getting lost.
+                        You’re the boss. Set your hours, block off time, and
+                        keep your calendar tight.
                       </p>
                     </div>
                   </li>
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">
-                        ⚡ Set It and Forget It
-                      </h3>
+                      <h3 className="text-xl font-bold">🗓️ Calendar Sync</h3>
                       <p className="text-neutral-500 dark:text-neutral-400">
-                        Automate your workflow with continuous integration.
+                        No more back-and-forth. Your bookings sync
+                        automatically—so you’re always one step ahead.
                       </p>
                     </div>
                   </li>
                   <li>
                     <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">
-                        🚀 Take Control of Your Business
-                      </h3>
+                      <h3 className="text-xl font-bold">💸 Secure Deposits</h3>
                       <p className="text-neutral-500 dark:text-neutral-400">
-                        Run your schedule, manage clients, and keep everything
-                        under control
+                        No more ghosting. Clients lock in with a deposit, so
+                        your time (and art) is respected.
                       </p>
                     </div>
                   </li>
@@ -143,26 +148,16 @@ export default function LandingPage() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
-                  Sign Up for Updates
+                  Sign Up for Release
                 </h2>
                 <p className="max-w-[600px] text-neutral-500 md:text-xl dark:text-neutral-400">
-                  Stay updated with the latest product news and updates.
+                  Stay updated with the latest product news and release date
+                  information.
                 </p>
               </div>
               <div className="w-full max-w-sm space-y-2">
                 <form className="flex sm:flex-row flex-col space-y-2 sm:space-y-0 sm:space-x-2">
                   <ClaimProfileButton />
-                  {/* <input
-                    className="max-w-lg flex-1 px-4 py-2 border-border border rounded-md "
-                    placeholder="Enter your email"
-                    type="email"
-                  />
-                  <button
-                    type="submit"
-                    className="inline-flex h-10 items-center justify-center rounded-md bg-neutral-900 px-4 text-sm font-medium text-neutral-50 shadow transition-colors hover:bg-neutral-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90 dark:focus-visible:ring-neutral-300"
-                  >
-                    Sign Up
-                  </button> */}
                 </form>
               </div>
             </div>

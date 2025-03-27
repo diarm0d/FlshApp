@@ -25,7 +25,7 @@ const ShareButton = () => {
       <Tooltip>
         <TooltipTrigger asChild>
           <div
-            className="w-10 h-10 flex items-center justify-center bg-secondary rounded-full cursor-pointer hover:bg-secondary/80 active:scale-95"
+            className="w-10 h-10 flex items-center justify-center bg-secondary rounded-full  border shadow-sm cursor-pointer hover:bg-secondary/80 active:scale-95"
             onClick={handleCopy}
           >
             {copied ? <CheckIcon className="text-green-500" /> : <Share2Icon />}
