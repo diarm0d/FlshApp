@@ -38,15 +38,15 @@ export default async function BookingPage({
   const showForm = !!date && !!time;
 
   return (
-    <main>
+    <main className=" bg-paper dark:bg-inherit h-screen">
       <div className="max-w-lg sm:max-w-xl mx-auto px-4 py-6">
         <div className="flex items-center justify-center">
           {showForm ? (
-            <Card className="max-w-[800px] w-full mx-auto border-0">
+            <Card className="max-w-[800px] w-full mx-auto border-0 shadow-none bg-paper dark:bg-inherit">
               <CardContent className="min-h-[450px] grid md:grid-cols-1 gap-4">
                 <div>
                   <div className="flex items-center">
-                    <div className="w-lg sm:mw-xl hidden sm:block">
+                    <div className="mt-2 w-lg sm:mw-xl hidden sm:block">
                       <Image
                         alt={flash.flash?.title ?? ""}
                         className="aspect-square object-contain border bg-white border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
@@ -89,7 +89,12 @@ export default async function BookingPage({
                   orientation="horizontal"
                   className="w-full h-[1px]  my-8"
                 />
-                <AptForm time={time} date={date} profileUrl={profileUrl} flash={flash?.flash as CompleteFlash} />
+                <AptForm
+                  time={time}
+                  date={date}
+                  profileUrl={profileUrl}
+                  flash={flash?.flash as CompleteFlash}
+                />
                 {/* <form
                   action={createBookingAction}
                   className="flex flex-col gap-y-4"
@@ -128,11 +133,11 @@ export default async function BookingPage({
               </CardContent>
             </Card>
           ) : (
-            <Card className="max-w-[1000px] w-full mx-auto border-0">
+            <Card className="max-w-[1000px] w-full mx-auto border-0 shadow-none bg-paper dark:bg-inheri">
               <CardContent className="min-h-[450px] grid grid-cols-1">
                 <div>
                   <div className="flex items-center">
-                    <div className="w-lg sm:mw-xl hidden sm:block">
+                    <div className="w-lg mt-2 sm:mw-xl hidden sm:block">
                       <Image
                         alt={flash.flash?.title ?? ""}
                         className="aspect-square object-contain bg-white border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"

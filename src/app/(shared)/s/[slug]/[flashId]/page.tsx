@@ -16,8 +16,8 @@ export default async function FlashPage({
   if (flash === null) notFound();
 
   return (
-    <main>
-      <div className="max-w-lg sm:max-w-xl mx-auto px-4 py-6">
+    <main className="bg-paper dark:bg-inherit h-screen">
+      <div className="max-w-lg sm:max-w-xl mx-auto px-4 py-6 ">
         <div className="mb-6">
           <div className="relative w-full aspect-auto bg-white rounded-lg overflow-hidden flex items-center justify-center">
             <div className="relative w-full h-[280px] sm:h-[400px] max-h-[70vh]">

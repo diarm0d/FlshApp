@@ -20,8 +20,8 @@ export default async function SharedPage({
   if (profile.public === false) return <main>This page is not public</main>;
   return (
     <main>
-      <div className="flex flex-col items-center h-screen">
-        <div className="max-w-lg sm:max-w-xl w-full px-4 py-6 rounded-lg shadow-md">
+      <div className="flex flex-col items-center bg-paper dark:bg-inherit">
+        <div className="max-w-lg sm:max-w-xl w-full px-4 py-6 rounded-lg">
           <ShareButton />
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24">
@@ -41,9 +41,9 @@ export default async function SharedPage({
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center bg-secondary text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-gray-700 transition-all w-fit max-w-full my-2"
+                className="inline-flex items-center justify-center bg-secondary text-gray-500 dark:text-white font-semibold px-4 py-2 rounded-lg shadow-sm border hover:bg-gray-50 dark:hover:bg-gray-700 transition-all w-fit max-w-full my-2"
               >
-                <MapPin className="mr-2 h-5 w-5 text-white" />
+                <MapPin className="mr-2 h-5 w-5 text-gray-500 dark:text-white" />
                 <span className="truncate">{profile.placeName}</span>
               </Link>
             </div>
@@ -80,7 +80,7 @@ export default async function SharedPage({
                         <h3 className="text-lg font-semibold mb-2">
                           {flash.title}
                         </h3>
-                        <p className="text-gray-200 text-sm">
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">
                           {flash.description}
                         </p>
                       </div>
