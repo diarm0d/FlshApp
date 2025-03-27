@@ -10,11 +10,11 @@ import Banner from "@/components/signup/Banner";
 import SignInButton from "@/components/signup/SignInButton";
 
 export default async function LandingPage({
-  params,
+  searchParams,
 }: {
-  params:  Promise<{ beta: string }>;
+  searchParams: Promise<{ beta: string }>;
 }) {
-  const { beta } = await params;
+  const { beta } = await searchParams;
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F4F2EE] dark:bg-inherit">
@@ -31,7 +31,7 @@ export default async function LandingPage({
           >
             Features
           </Link>
-          <SignInButton />
+          <SignInButton text='Sign In'/>
         </nav>
       </header>
       <main className="flex-1">

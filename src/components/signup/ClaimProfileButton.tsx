@@ -14,6 +14,7 @@ interface Props {
 
 
 export default function ClaimProfileButton({ beta }: Props) {
+  
   useEffect(() => {
     if (beta === "true") {
       toast.success("sign up successful!");
