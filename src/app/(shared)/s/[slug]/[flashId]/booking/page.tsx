@@ -78,7 +78,7 @@ export default async function BookingPage({
                         <p className="flex items-center">
                           <MapPin className="size-4 mr-2 text-primary" />
                           <span className="text-sm font-medium text-muted-foreground">
-                            Berlin
+                            {flash.flash?.profile?.placeName}
                           </span>
                         </p>
                       </div>
@@ -95,41 +95,6 @@ export default async function BookingPage({
                   profileUrl={profileUrl}
                   flash={flash?.flash as CompleteFlash}
                 />
-                {/* <form
-                  action={createBookingAction}
-                  className="flex flex-col gap-y-4"
-                >
-                  <input type="hidden" name="fromTime" value={time} />
-                  <input type="hidden" name="eventDate" value={date} />
-                  <input type="hidden" name="redirectUrl" value={profileUrl} />
-                  <input
-                    type="hidden"
-                    name="meetingLength"
-                    value={flash.flash?.profile?.sessionDuration}
-                  />
-                  <input
-                    type="hidden"
-                    name="userId"
-                    value={flash.flash?.userId}
-                  />
-                  <input type="hidden" name="flashId" value={flash.flash?.id} />
-                  <input
-                    type="hidden"
-                    name="flashTitle"
-                    value={flash.flash?.title}
-                  />
-                  <div className="flex flex-col gap-y-2">
-                    <Label>Your Name</Label>
-                    <Input name="name" placeholder="Enter your name" />
-                  </div>
-                  <div className="flex flex-col gap-y-2">
-                    <Label>Your Email</Label>
-                    <Input name="email" placeholder="Enter your email" />
-                  </div>
-                  <Button type="submit" className="w-full mt-5">
-                    Pay Deposit
-                  </Button>
-                </form> */}
               </CardContent>
             </Card>
           ) : (
