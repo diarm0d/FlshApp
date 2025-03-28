@@ -98,7 +98,7 @@ export default async function BookingPage({
               </CardContent>
             </Card>
           ) : (
-            <Card className="max-w-[1000px] w-full mx-auto border-0 shadow-none bg-paper dark:bg-inheri">
+            <Card className="max-w-[1000px] w-full mx-auto border-0 shadow-none bg-paper dark:bg-inherit">
               <CardContent className="min-h-[450px] grid grid-cols-1">
                 <div>
                   <div className="flex items-center">
