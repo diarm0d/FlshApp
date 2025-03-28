@@ -53,6 +53,7 @@ export default async function BookingPage({
                         height={150}
                         src={flash.flash?.flashImage ?? ""}
                         width={150}
+                        priority
                       />
                     </div>
                     <div className="ml-0 sm:ml-8">
